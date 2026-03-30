@@ -513,16 +513,61 @@
     };
     
     // 初始化資料 (增加了 heroImage 屬性)
-    let appState = {
-     apiKey: "AIzaSyDZXJ93GdCcCdVDtuxSnSQ4NxwWauCA3Cg",
-     authDomain: "travel-plan-a55bb.firebaseapp.com",
-     databaseURL: "https://travel-plan-a55bb-default-rtdb.firebaseio.com",
-     projectId: "travel-plan-a55bb",
-     storageBucket: "travel-plan-a55bb.firebasestorage.app",
-     messagingSenderId: "406680144597",
-     appId: "1:406680144597:web:ed6168decb92356d70f05c",
-     measurementId: "G-Z3VGES0JNV"
+    
+     // 1. 貼上你在 Firebase 拿到的專屬設定檔
+    const firebaseConfig = {
+       apiKey: "AIzaSyDZXJ93GdCcCdVDtuxSnSQ4NxwWauCA3Cg",
+  	authDomain: "travel-plan-a55bb.firebaseapp.com",
+  	databaseURL: "https://travel-plan-a55bb-default-rtdb.firebaseio.com",
+  	projectId: "travel-plan-a55bb",
+  	storageBucket: "travel-plan-a55bb.firebasestorage.app",
+  	messagingSenderId: "406680144597",
+  	appId: "1:406680144597:web:ed6168decb92356d70f05c",
+  	measurementId: "G-Z3VGES0JNV"
     };
+
+    // 2. 啟動 Firebase 與資料庫連線
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // 3. 初始化一個乾淨的空狀態 (假資料都拿掉了)
+    let appState = {
+      trips: [], itineraries: {}, expenses: {}, luggage: {}, souvenir: {}
+    };
+
+    // 4. ✨ 雲端同步魔法：只要雲端資料有變，這裡就會自動更新畫面 ✨
+    db.ref('myTravelApp').on('value', (snapshot) => {
+      const data = snapshot.val();
+      
+      if (data) {
+        appState = data; // 用雲端資料覆蓋本地資料
+        
+        // 防呆機制：確保資料結構存在
+        if(!appState.trips) appState.trips = [];
+        if(!appState.itineraries) appState.itineraries = {};
+        if(!appState.expenses) appState.expenses = {};
+        if(!appState.luggage) appState.luggage = {};
+        if(!appState.souvenir) appState.souvenir = {};
+      }
+      
+      // 資料抓到後，自動重新渲染畫面
+      renderTrips();
+      if(appState.currentTripId) {
+          const currentTrip = appState.trips.find(t => t.id === appState.currentTripId);
+          if (currentTrip) {
+             generateDaysForTrip(currentTrip);
+          }
+          renderExpenses();
+          renderChecklist('luggage');
+          renderChecklist('souvenir');
+      }
+    });
+
+    // 5. 建立發射器：負責把最新的修改推上雲端
+    function saveToDatabase() {
+      db.ref('myTravelApp').set(appState);
+    }
+    
 
     let sortableInst = null;
 
