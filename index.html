@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>歐ㄎ一哪哇 🏝️ 專業版</title>
+  <title>TripMap</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
   <style>
@@ -340,7 +340,7 @@
         <div class="flight-card-top"><div style="font-family: var(--serif-font); color: #888; font-weight: bold;" id="fl-in-airline">釜山航空</div><div class="flight-huge-num" id="fl-in-code">BX 795</div></div>
         <div class="flight-card-middle" style="border-bottom: 1px dashed #cbd5e1;">
           <div class="flight-time-block"><div class="flight-huge-code" id="fl-in-dep-port">PUS</div><div class="flight-huge-time" id="fl-in-dep-time">11:00</div><div class="flight-airport-name flight-airport-pus" id="fl-in-dep-city">釜山</div></div>
-          <div style="text-align:center;"><div id="fl-in-duration" style="font-size: 0.8rem; color:#64748b;">02h30m</div><div style="font-size: 1.5rem; color: var(--card-blue); margin: 2px 0; transform: scaleX(-1);"><i class="fas fa-plane"></i></div><div id="fl-in-date" style="font-size: 0.8rem; color:#64748b;">2026/03/14</div></div>
+          <div style="text-align:center;"><div id="fl-in-duration" style="font-size: 0.8rem; color:#64748b;">02h30m</div><div style="font-size: 1.5rem; color: var(--card-blue); margin: 2px 0;"><i class="fas fa-plane"></i></div><div id="fl-in-date" style="font-size: 0.8rem; color:#64748b;">2026/03/14</div></div>
           <div class="flight-time-block"><div class="flight-huge-code" id="fl-in-arr-port">KHH</div><div class="flight-huge-time" id="fl-in-arr-time">12:30</div><div class="flight-airport-name flight-airport-khh" id="fl-in-arr-city">高雄</div></div>
         </div>
         <div class="flight-info-bottom" style="padding-top: 15px;"><div class="flight-info-box"><div class="flight-info-sub">BAGGAGE</div><div class="flight-info-value" id="fl-in-baggage">15kg</div></div><div class="flight-info-box"><div class="flight-info-sub">AIRCRAFT</div><div class="flight-info-value" id="fl-in-aircraft">A321</div></div></div>
@@ -512,45 +512,54 @@
       'other': { icon: 'fa-star', color: '#10b981' }
     };
     
-    // 初始化資料 (增加了 heroImage 屬性)
-    
-     // 1. 貼上你在 Firebase 拿到的專屬設定檔
+    // 1. 貼上你在 Firebase 拿到的專屬設定檔
     const firebaseConfig = {
-       apiKey: "AIzaSyDZXJ93GdCcCdVDtuxSnSQ4NxwWauCA3Cg",
-  	authDomain: "travel-plan-a55bb.firebaseapp.com",
-  	databaseURL: "https://travel-plan-a55bb-default-rtdb.firebaseio.com",
-  	projectId: "travel-plan-a55bb",
-  	storageBucket: "travel-plan-a55bb.firebasestorage.app",
-  	messagingSenderId: "406680144597",
-  	appId: "1:406680144597:web:ed6168decb92356d70f05c",
-  	measurementId: "G-Z3VGES0JNV"
+      apiKey: "AIzaSyDZXJ93GdCcCdVDtuxSnSQ4NxwWauCA3Cg",
+      authDomain: "travel-plan-a55bb.firebaseapp.com",
+      databaseURL: "https://travel-plan-a55bb-default-rtdb.firebaseio.com",
+      projectId: "travel-plan-a55bb",
+      storageBucket: "travel-plan-a55bb.firebasestorage.app",
+      messagingSenderId: "406680144597",
+      appId: "1:406680144597:web:ed6168decb92356d70f05c",
+      measurementId: "G-Z3VGES0JNV"
     };
 
     // 2. 啟動 Firebase 與資料庫連線
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 3. 初始化一個乾淨的空狀態 (假資料都拿掉了)
+    // 3. 初始化狀態 (新增了 flights 用來儲存航班)
     let appState = {
-      trips: [], itineraries: {}, expenses: {}, luggage: {}, souvenir: {}
+      trips: [], itineraries: {}, expenses: {}, luggage: {}, souvenir: {}, flights: {}
     };
 
-    // 4. ✨ 雲端同步魔法：只要雲端資料有變，這裡就會自動更新畫面 ✨
+    // 4. ✨ 雲端同步魔法：防呆加強版 ✨
     db.ref('myTravelApp').on('value', (snapshot) => {
       const data = snapshot.val();
       
       if (data) {
-        appState = data; // 用雲端資料覆蓋本地資料
+        appState = data; 
         
-        // 防呆機制：確保資料結構存在
-        if(!appState.trips) appState.trips = [];
+        // --- 核心防護：修復 Firebase 把陣列變成物件的 Bug ---
+        const toArray = (obj) => obj ? (Array.isArray(obj) ? obj : Object.values(obj)) : [];
+
+        appState.trips = toArray(appState.trips);
         if(!appState.itineraries) appState.itineraries = {};
         if(!appState.expenses) appState.expenses = {};
         if(!appState.luggage) appState.luggage = {};
         if(!appState.souvenir) appState.souvenir = {};
+        if(!appState.flights) appState.flights = {};
+
+        for (let key in appState.expenses) appState.expenses[key] = toArray(appState.expenses[key]);
+        for (let key in appState.luggage) appState.luggage[key] = toArray(appState.luggage[key]);
+        for (let key in appState.souvenir) appState.souvenir[key] = toArray(appState.souvenir[key]);
+        
+        for (let key in appState.itineraries) {
+            let tripDays = toArray(appState.itineraries[key]);
+            appState.itineraries[key] = tripDays.map(day => toArray(day));
+        }
       }
       
-      // 資料抓到後，自動重新渲染畫面
       renderTrips();
       if(appState.currentTripId) {
           const currentTrip = appState.trips.find(t => t.id === appState.currentTripId);
@@ -560,25 +569,22 @@
           renderExpenses();
           renderChecklist('luggage');
           renderChecklist('souvenir');
+          renderFlightInfo(); // 渲染航班資訊
       }
     });
 
-    // 5. 建立發射器：負責把最新的修改推上雲端
     function saveToDatabase() {
       db.ref('myTravelApp').set(appState);
     }
     
-
     let sortableInst = null;
 
-    // --- 輔助函式：備註內容自動轉換連結 ---
     function formatTextWithLinks(text) {
       if (!text) return '';
       const urlRegex = /(https?:\/\/[^\s]+)/g;
       return text.replace(urlRegex, url => `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: var(--card-blue); text-decoration: underline; word-break: break-all;" onclick="event.stopPropagation()">${url}</a>`).replace(/\n/g, '<br>');
     }
 
-    // --- 頁面與導覽切換 ---
     function switchPage(pageId) {
       const views = ['trips-list-view', 'itinerary-view', 'flight-view', 'expense-view', 'luggage-view', 'souvenir-view'];
       views.forEach(id => { const el = document.getElementById(id); if(el) el.classList.add('hidden'); });
@@ -602,7 +608,6 @@
 
     function openTool(toolId) { switchPage(toolId); }
 
-    // --- 首頁渲染 ---
     function renderTrips() {
       const container = document.getElementById('trips-container');
       container.innerHTML = '';
@@ -627,7 +632,6 @@
       if(!appState.expenses) appState.expenses = {};
       if(!appState.expenses[tripId]) appState.expenses[tripId] = [];
 
-      // 套用自訂封面圖 (如果有的話)
       const heroEl = document.querySelector('.itinerary-hero');
       if(trip.heroImage) {
           heroEl.style.backgroundImage = `url('${trip.heroImage}')`;
@@ -639,10 +643,10 @@
       renderExpenses();
       renderChecklist('luggage');
       renderChecklist('souvenir');
+      renderFlightInfo();
       switchPage('itinerary-view');
     }
 
-    // --- 自訂封面圖邏輯 ---
     function openImageModal() {
       const trip = appState.trips.find(t => t.id === appState.currentTripId);
       document.getElementById('hero-image-url').value = trip.heroImage || '';
@@ -661,10 +665,9 @@
           heroEl.style.backgroundImage = `url('https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=600&q=80')`;
       }
       closeModal('image-modal');
-	saveToDatabase();
+      saveToDatabase();
     }
 
-    // --- 旅程修改邏輯 ---
     let editingTripId = null;
     function openTripModal(tripId = null) {
       editingTripId = tripId;
@@ -715,20 +718,24 @@
     function deleteCurrentTrip() {
       if(confirm("確定要刪除這個旅程嗎？")){
         appState.trips = appState.trips.filter(t => t.id !== editingTripId);
-        delete appState.itineraries[editingTripId];
+        if(appState.itineraries) delete appState.itineraries[editingTripId];
+        if(appState.expenses) delete appState.expenses[editingTripId];
+        if(appState.luggage) delete appState.luggage[editingTripId];
+        if(appState.souvenir) delete appState.souvenir[editingTripId];
+        if(appState.flights) delete appState.flights[editingTripId];
+
         closeModal('trip-modal');
         renderTrips();
         if(appState.currentTripId === editingTripId) { switchPage('trips-list-view'); }
+        saveToDatabase(); // 修改：移到 if 裡面
       }
-        saveToDatabase();
     }
 
-    // --- 行程表天數與渲染 ---
     function generateDaysForTrip(trip) {
       const container = document.getElementById('date-container');
       container.innerHTML = '';
       const startDate = new Date(trip.start); const endDate = new Date(trip.end);
-      const diffDays = Math.ceil(Math.abs(endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+      const diffDays = Math.round(Math.abs(endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
       if(!appState.itineraries[trip.id]) appState.itineraries[trip.id] = [];
       
       for(let i=0; i<diffDays; i++) {
@@ -789,7 +796,7 @@
         
         if(index < items.length - 1) {
            const transText = (item.transTime && item.transTime !== "交通時間") ? item.transTime : '新增交通時間';
-           html += `<div class="transport-connector"><div class="trans-mode-icon">🚗</div><div class="trans-time-text" onclick="openTransModal('${item.id}')">${transText}</div></div>`;
+           html += `<div class="transport-connector"><div class="trans-mode-icon">🚗</div><div class="trans-time-text" onclick="event.stopPropagation(); openTransModal('${item.id}')">${transText}</div></div>`;
         }
         
         wrapper.innerHTML = html;
@@ -806,12 +813,11 @@
           const movedItem = array.splice(evt.oldIndex, 1)[0];
           array.splice(evt.newIndex, 0, movedItem);
           renderItinerary(); 
-	saveToDatabase();
+          saveToDatabase();
         }
       });
     }
 
-    // --- 單一行程 Modal ---
     let editingItiId = null;
     function openItiModal(itiId = null) {
       editingItiId = itiId;
@@ -866,11 +872,10 @@
         if(index > -1) dayItems.splice(index, 1);
         closeModal('itinerary-modal');
         renderItinerary();
+        saveToDatabase(); // 修改：移到 if 裡面
       }
-     saveToDatabase();
     }
 
-    // --- 編輯交通時間 Modal ---
     let editingTransItemId = null;
     function openTransModal(itemId) {
       editingTransItemId = itemId;
@@ -907,7 +912,6 @@
       saveToDatabase();
     }
 
-    // --- 記帳本邏輯 ---
     function renderExpenses() {
       const list = document.getElementById('expense-list');
       list.innerHTML = '';
@@ -920,8 +924,6 @@
           if(!personTotals[exp.who]) personTotals[exp.who] = 0;
           personTotals[exp.who] += Number(exp.amount);
 
-          // 加入 clickable 與 onclick 事件，點擊開啟編輯視窗
-          // 注意：刪除按鈕加上 event.stopPropagation() 防止點擊時也觸發卡片的 onclick
           list.innerHTML += `
             <div class="expense-item clickable" onclick="openExpenseEditModal('${exp.id}')">
               <div class="exp-left"><div class="exp-title">${exp.what}</div><div class="exp-who"><i class="fas fa-user"></i> ${exp.who}</div></div>
@@ -950,7 +952,6 @@
       
       appState.expenses[tripId].unshift({ id: 'e'+Date.now(), what, amount, who, date });
       renderExpenses();
-      
       saveToDatabase();
 
       document.getElementById('exp-what').value = ''; 
@@ -962,11 +963,10 @@
         const tripId = appState.currentTripId;
         appState.expenses[tripId] = appState.expenses[tripId].filter(e => e.id !== id);
         renderExpenses();
+        saveToDatabase(); // 修改：移到 if 裡面
       }
-     saveToDatabase();
     }
 
-    // --- 編輯記帳本邏輯 (新增) ---
     let editingExpenseId = null;
     function openExpenseEditModal(expId) {
       editingExpenseId = expId;
@@ -1004,11 +1004,10 @@
         appState.expenses[tripId] = appState.expenses[tripId].filter(e => e.id !== editingExpenseId);
         closeModal('expense-edit-modal');
         renderExpenses();
+        saveToDatabase(); // 修改：移到 if 裡面
       }
- 	saveToDatabase();
     }
 
-    // --- 行李與伴手禮清單 ---
     function renderChecklist(type) {
       const container = document.getElementById(`${type}-list-container`);
       container.innerHTML = '';
@@ -1036,41 +1035,83 @@
       appState[type][appState.currentTripId].unshift({ id: type.charAt(0) + Date.now(), text: text, done: false });
       inputEl.value = '';
       renderChecklist(type);
-	saveToDatabase();
+      saveToDatabase();
     }
 
     function toggleCheckItem(type, itemId) {
       const item = appState[type][appState.currentTripId].find(i => i.id === itemId);
       item.done = !item.done;
       renderChecklist(type);
-	saveToDatabase();
+      saveToDatabase();
     }
 
     function deleteCheckItem(type, itemId) {
       appState[type][appState.currentTripId] = appState[type][appState.currentTripId].filter(i => i.id !== itemId);
       renderChecklist(type);
-	saveToDatabase();
+      saveToDatabase();
     }
 
-    // --- 航班編輯切換 ---
+    // --- 新增：渲染航班資訊的函數 ---
+    function renderFlightInfo() {
+      const tripId = appState.currentTripId;
+      if (!tripId) return;
+
+      // 如果還沒有這個旅程的航班資料，建立一份預設的空模板
+      if (!appState.flights[tripId]) {
+          appState.flights[tripId] = {
+              'fl-out-airline': '釜山航空', 'fl-out-code': 'BX 796',
+              'fl-out-dep-port': 'KHH', 'fl-out-dep-time': '15:00', 'fl-out-dep-city': '高雄',
+              'fl-out-duration': '02h25m', 'fl-out-date': '2026/03/10',
+              'fl-out-arr-port': 'PUS', 'fl-out-arr-time': '18:25', 'fl-out-arr-city': '釜山',
+              'fl-out-baggage': '15kg', 'fl-out-aircraft': 'A321',
+              
+              'fl-in-airline': '釜山航空', 'fl-in-code': 'BX 795',
+              'fl-in-dep-port': 'PUS', 'fl-in-dep-time': '11:00', 'fl-in-dep-city': '釜山',
+              'fl-in-duration': '02h30m', 'fl-in-date': '2026/03/14',
+              'fl-in-arr-port': 'KHH', 'fl-in-arr-time': '12:30', 'fl-in-arr-city': '高雄',
+              'fl-in-baggage': '15kg', 'fl-in-aircraft': 'A321'
+          };
+      }
+
+      const flightData = appState.flights[tripId];
+      Object.keys(flightData).forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.innerText = flightData[id];
+      });
+    }
+
+    // --- 修改：編輯航班後真正存檔 ---
     let isFlightEditing = false;
     function toggleBothFlightsEdit() {
       const btn = document.getElementById('fl-edit-btn');
       isFlightEditing = !isFlightEditing;
       const editableIds = ['fl-out-airline', 'fl-out-code', 'fl-out-dep-port', 'fl-out-dep-time', 'fl-out-dep-city', 'fl-out-duration', 'fl-out-date', 'fl-out-arr-port', 'fl-out-arr-time', 'fl-out-arr-city', 'fl-out-baggage', 'fl-out-aircraft', 'fl-in-airline', 'fl-in-code', 'fl-in-dep-port', 'fl-in-dep-time', 'fl-in-dep-city', 'fl-in-duration', 'fl-in-date', 'fl-in-arr-port', 'fl-in-arr-time', 'fl-in-arr-city', 'fl-in-baggage', 'fl-in-aircraft'];
+      const tripId = appState.currentTripId;
+
       if(isFlightEditing) {
         btn.innerHTML = '<i class="fas fa-save"></i> 儲存航班資訊'; btn.style.background = 'var(--accent-slate)'; btn.style.color = 'white';
-        editableIds.forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = `<input type="text" class="flight-edit-input" value="${el.innerText}">`; });
+        editableIds.forEach(id => { 
+            const el = document.getElementById(id); 
+            if(el) el.innerHTML = `<input type="text" class="flight-edit-input" value="${el.innerText}">`; 
+        });
       } else {
         btn.innerHTML = '<i class="fas fa-pencil-alt"></i> 編輯航班資訊'; btn.style.background = 'var(--card-blue)'; btn.style.color = 'white';
-        editableIds.forEach(id => { const el = document.getElementById(id); const input = el ? el.querySelector('input') : null; if(input) el.innerText = input.value; });
+        
+        // 將編輯好的資料存入 appState
+        editableIds.forEach(id => { 
+            const el = document.getElementById(id); 
+            const input = el ? el.querySelector('input') : null; 
+            if(input) {
+                el.innerText = input.value; 
+                appState.flights[tripId][id] = input.value;
+            }
+        });
+        saveToDatabase(); // 修改：將資料庫寫入動作放在成功存入 appState 之後
       }
-	saveToDatabase();
     }
 
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    // 初始化
     window.onload = function() {
       renderTrips();
       switchPage('trips-list-view');
@@ -1078,6 +1119,3 @@
   </script>
 </body>
 </html>
-
-}
-還是沒變耶 不行儲存...但我其他功能正常了 而且這個版本我只要點進去去程航班的釜山航空他就跳到更改文字 怎麼關掉 我要點擊編輯航班資訊才能更動阿
