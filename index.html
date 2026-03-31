@@ -91,7 +91,7 @@
     }
     .main-add-btn {
       background: var(--card-blue); color: white; padding: 15px; border-radius: 25px; 
-      text-align: center; font-size: 1.1rem; cursor: margin-top: 20px; font-weight: bold;
+      text-align: center; font-size: 1.1rem; cursor: pointer; margin-top: 20px; font-weight: bold;
       box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
     }
 
@@ -209,7 +209,6 @@
       font-size: 1rem; font-family: inherit; font-weight: 500; outline: none; background: #f8fafc;
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--card-blue); background: #fff; }
-    /* ✨ 這裡加大了備註框的高度 ✨ */
     .form-group textarea { resize: vertical; min-height: 150px; line-height: 1.5; }
 
     .modal-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 25px; gap: 10px;}
@@ -430,7 +429,11 @@
       <div class="form-group">
         <label>分類</label>
         <select id="iti-category">
-          <option value="attraction">📸 景點</option><option value="food">🍜 美食</option><option value="flight">✈️ 航班</option><option value="other">⭐ 其他</option>
+          <option value="attraction">📸 景點</option>
+          <option value="food">🍜 美食</option>
+          <option value="flight">✈️ 航班</option>
+          <option value="shopping">🛍️ 購物</option>
+          <option value="other">⭐ 其他</option>
         </select>
       </div>
       <div class="form-group"><label>名稱 / 標題</label><input type="text" id="iti-title" placeholder="例如：清水寺"></div>
@@ -539,10 +542,13 @@
   <script>
     const EXCHANGE_RATE = 0.21;
     const DAYS_OF_WEEK = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+    
+    // ✨ 新增了 'shopping' 的設定，使用購物袋圖示與亮粉紅色 ✨
     const catIcons = {
       'attraction': { icon: 'fa-camera', color: '#3b82f6' },
       'food': { icon: 'fa-utensils', color: '#f59e0b' },
       'flight': { icon: 'fa-plane', color: '#64748b' },
+      'shopping': { icon: 'fa-shopping-bag', color: '#ec4899' },
       'other': { icon: 'fa-star', color: '#10b981' }
     };
     
