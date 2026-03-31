@@ -169,6 +169,16 @@
     .info-row { display: flex; align-items: flex-start; gap: 8px; font-size: 0.9rem; color: #475569; line-height: 1.5;}
     .info-row i { color: #94a3b8; margin-top: 3px; width: 14px; text-align: center;}
     
+    /* --- 🌟 新增的圖片樣式 🌟 --- */
+    .item-image {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-top: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
     .transport-connector {
       margin-left: 35px; border-left: 2px dashed #cbd5e1; padding: 10px 0 10px 25px;
       display: flex; align-items: center; gap: 8px; position: relative;
@@ -255,7 +265,7 @@
     .exp-twd { font-weight: 900; color: var(--card-blue); font-size: 1.2rem; display: flex; align-items: center; justify-content: flex-end; gap: 8px;}
     .exp-jpy { font-size: 0.8rem; color: #94a3b8; margin-top: 2px;}
 
-    /* --- 7. 清單通用樣式 (行李 & 伴手禮) --- */
+    /* --- 7. 清單通用樣式 (行李 & 必買) --- */
     .list-container { padding: 20px; max-width: 600px; margin: 0 auto; }
     .add-list-bar { display: flex; gap: 10px; margin-bottom: 20px; }
     .add-list-bar input { flex: 1; padding: 14px 15px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 1rem; outline: none;}
@@ -397,10 +407,10 @@
   </div>
   
   <div id="souvenir-view" class="hidden">
-    <div class="nav-bar"><div class="back-btn" onclick="switchPage('trips-list-view')"><i class="fas fa-home"></i> 總覽</div><div style="font-size: 1.2rem; font-weight: 900; color: var(--accent-slate);">伴手禮清單</div><div style="width: 70px;"></div></div>
+    <div class="nav-bar"><div class="back-btn" onclick="switchPage('trips-list-view')"><i class="fas fa-home"></i> 總覽</div><div style="font-size: 1.2rem; font-weight: 900; color: var(--accent-slate);">必買清單</div><div style="width: 70px;"></div></div>
     <div class="list-container">
       <div class="add-list-bar">
-        <input type="text" id="souvenir-input" placeholder="新增想買的伴手禮 (例如: 東京芭娜娜)">
+        <input type="text" id="souvenir-input" placeholder="新增必買物品 (例如: 東京芭娜娜)">
         <button class="add-list-btn clickable" onclick="addListItem('souvenir')"><i class="fas fa-plus"></i></button>
       </div>
       <div id="souvenir-list-container"></div>
@@ -439,6 +449,8 @@
       <div class="form-group"><label>名稱 / 標題</label><input type="text" id="iti-title" placeholder="例如：清水寺"></div>
       <div class="form-group"><label>時間</label><input type="time" id="iti-time"></div>
       <div class="form-group"><label>備註 (選填)</label><textarea id="iti-notes" placeholder="例如：記得帶預約條碼、必吃抹茶冰淇淋..."></textarea></div>
+      <div class="form-group"><label>圖片網址 (選填)</label><input type="text" id="iti-image" placeholder="貼上圖片連結..."></div>
+      
       <div class="modal-actions">
         <button class="btn-delete-item clickable" id="iti-del-btn" onclick="deleteCurrentIti()">刪除</button>
         <button class="btn-save clickable" onclick="saveItineraryItem()">儲存</button>
@@ -534,7 +546,7 @@
     <div class="shortcut-item" id="nav-expense-view" onclick="openTool('expense-view')"><i class="fas fa-calculator"></i><span>記帳</span></div>
     <div class="shortcut-item" id="nav-flight-view" onclick="openTool('flight-view')"><i class="fas fa-plane"></i><span>航班</span></div>
     <div class="shortcut-item" id="nav-luggage-view" onclick="openTool('luggage-view')"><i class="fas fa-suitcase"></i><span>行李</span></div>
-    <div class="shortcut-item" id="nav-souvenir-view" onclick="openTool('souvenir-view')"><i class="fas fa-gift"></i><span>伴手禮</span></div>
+    <div class="shortcut-item" id="nav-souvenir-view" onclick="openTool('souvenir-view')"><i class="fas fa-gift"></i><span>必買</span></div>
   </div>
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
@@ -951,6 +963,9 @@
         
         const notesContent = formatTextWithLinks(item.notes, item.id);
         const notesHtml = notesContent ? `<div class="info-row"><i class="fas fa-pen"></i> <span style="flex:1;">${notesContent}</span></div>` : '';
+        
+        // 🌟 這裡負責顯示圖片 🌟
+        const imageHtml = item.imageUrl ? `<img src="${item.imageUrl}" class="item-image" alt="行程圖片">` : '';
 
         let html = `
           <div class="timeline-item" onclick="openItiModal('${item.id}')">
@@ -961,7 +976,7 @@
                 <h3 class="item-title">${item.title}</h3>
               </div>
             </div>
-            ${notesHtml ? `<div class="item-content">${notesHtml}</div>` : ''}
+            ${(notesHtml || imageHtml) ? `<div class="item-content">${notesHtml}${imageHtml}</div>` : ''}
             <div class="drag-handle" onclick="event.stopPropagation()"><i class="fas fa-grip-vertical"></i></div>
           </div>
         `;
@@ -1004,6 +1019,8 @@
         document.getElementById('iti-title').value = item.title;
         document.getElementById('iti-time').value = item.time;
         document.getElementById('iti-notes').value = item.notes || "";
+        // 🌟 載入圖片網址 🌟
+        document.getElementById('iti-image').value = item.imageUrl || "";
         delBtn.style.display = 'block';
       } else {
         titleEl.innerText = "新增行程";
@@ -1011,6 +1028,8 @@
         document.getElementById('iti-title').value = "";
         document.getElementById('iti-time').value = "12:00";
         document.getElementById('iti-notes').value = "";
+        // 🌟 清空圖片網址 🌟
+        document.getElementById('iti-image').value = "";
         delBtn.style.display = 'none';
       }
       modal.classList.remove('hidden');
@@ -1021,15 +1040,19 @@
       const title = document.getElementById('iti-title').value.trim();
       const time = document.getElementById('iti-time').value;
       const notes = document.getElementById('iti-notes').value.trim();
+      // 🌟 讀取圖片網址 🌟
+      const imageUrl = document.getElementById('iti-image').value.trim();
 
       if(!title || !time) { alert("請填寫標題與時間！"); return; }
       const dayItems = appState.itineraries[appState.currentTripId][appState.currentDayIndex];
 
       if (editingItiId) {
         const item = dayItems.find(i => i.id === editingItiId);
-        Object.assign(item, { cat, title, time, notes });
+        // 🌟 儲存 imageUrl 🌟
+        Object.assign(item, { cat, title, time, notes, imageUrl });
       } else {
-        dayItems.push({ id: 'i' + Date.now(), cat, title, time, notes, transTime: '' });
+        // 🌟 新增 imageUrl 🌟
+        dayItems.push({ id: 'i' + Date.now(), cat, title, time, notes, transTime: '', imageUrl: imageUrl });
         dayItems.sort((a,b) => a.time.localeCompare(b.time));
       }
       closeModal('itinerary-modal');
