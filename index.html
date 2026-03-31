@@ -7,6 +7,8 @@
 
   <link rel="apple-touch-icon" sizes="180x180" href="50251f50bb741cd8af5063c6fad47b19.jpg">
   <link rel="icon" type="image/png" sizes="192x192" href="50251f50bb741cd8af5063c6fad47b19.jpg">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
@@ -299,7 +301,7 @@
 
   <div id="trips-list-view">
     <div class="home-bg-blur"></div>
-    <div style="padding: 15px; text-align: center; font-size: 2.2rem; font-weight: bold; color: var(--accent-slate); font-family: 'Lucida Calligraphy', cursive; margin-bottom: 20px;">travel plan</div>
+    <div style="padding: 15px; text-align: center; font-size: 2.6rem; font-weight: bold; color: var(--accent-slate); font-family: 'Dancing Script', cursive; margin-bottom: 20px;">travel plan</div>
     <div id="trips-container"></div>
     <div class="main-add-btn sticker-card clickable" onclick="openTripModal()">＋ 新增旅程</div>
   </div>
@@ -559,7 +561,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 3. 初始化狀態 (新增了 flights 用來儲存航班)
+    // 3. 初始化狀態
     let appState = {
       trips: [], itineraries: {}, expenses: {}, luggage: {}, souvenir: {}, flights: {}
     };
@@ -571,7 +573,6 @@
       if (data) {
         appState = data; 
         
-        // --- 核心防護：修復 Firebase 把陣列變成物件的 Bug ---
         const toArray = (obj) => obj ? (Array.isArray(obj) ? obj : Object.values(obj)) : [];
 
         appState.trips = toArray(appState.trips);
@@ -600,7 +601,7 @@
           renderExpenses();
           renderChecklist('luggage');
           renderChecklist('souvenir');
-          renderFlightInfo(); // 渲染航班資訊
+          renderFlightInfo(); 
       }
     });
 
@@ -609,33 +610,63 @@
     }
     
     let sortableInst = null;
-
-    // ✨ 修改：加入長按編輯功能的文字處理 ✨
     let linkPressTimer = null;
     let isLongPressTriggered = false;
     let currentEditLink = { url: '', name: '', itemId: '' };
 
+    // ✨ 定義要循環的四種柔和色彩 (黃 -> 綠 -> 紫 -> 藍) ✨
+    const badgeColors = [
+        { bg: '#FDF3C6', text: '#8A6D3B' }, // 0: 黃色系
+        { bg: '#DDF1E4', text: '#3C763D' }, // 1: 綠色系
+        { bg: '#EAE0F5', text: '#6A4A87' }, // 2: 紫色系
+        { bg: '#E0EFFF', text: '#31708F' }  // 3: 藍色系
+    ];
+
+    // ✨ 修改：加入計數器來計算這是第幾個連結 ✨
     function formatTextWithLinks(text, itemId) {
       if (!text) return '';
       let escapedText = text.replace(/\n/g, '<br>');
       
-      // 同時抓取 [自訂名稱](網址) 格式 與 單純的 http:// 網址
       const combinedRegex = /\[(.*?)\]\((https?:\/\/[^\s<]+?)\)|(https?:\/\/[^\s<]+)/g;
+      
+      // 這個計數器會在每個行程項目的備註中，從 0 開始計算出現的連結數量
+      let linkCount = 0; 
+
       return escapedText.replace(combinedRegex, (match, mdName, mdUrl, rawUrl) => {
+          let currentCount = linkCount++; // 每次找到連結就+1
+          
           if (mdName && mdUrl) {
-              return createAnchor(mdUrl, mdName, itemId);
+              return createAnchor(mdUrl, mdName, itemId, currentCount);
           } else if (rawUrl) {
-              return createAnchor(rawUrl, rawUrl, itemId);
+              return createAnchor(rawUrl, rawUrl, itemId, currentCount);
           }
           return match;
       });
     }
 
-    function createAnchor(url, name, itemId) {
+    // ✨ 修改：為連結套上帶顏色的 Badge 樣式 ✨
+    function createAnchor(url, name, itemId, linkIndex) {
         const safeUrl = url.replace(/'/g, "\\'").replace(/"/g, "&quot;");
         const safeName = name.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+        
+        // 利用餘數 ( % 4) 讓顏色永遠在 0~3 之間循環 (黃、綠、紫、藍)
+        const colorObj = badgeColors[linkIndex % 4];
+        
+        // 加入你想要的樣式：背景色、文字色、圓角、取消底線、內邊距
+        const badgeStyle = `
+            display: inline-block; 
+            background-color: ${colorObj.bg}; 
+            color: ${colorObj.text}; 
+            text-decoration: none; 
+            padding: 2px 10px; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            margin: 2px 0;
+            word-break: break-all;
+        `;
+
         return `<a href="${url}" target="_blank" rel="noopener noreferrer" 
-                   style="color: var(--card-blue); text-decoration: underline; word-break: break-all; padding: 2px 0;" 
+                   style="${badgeStyle}" 
                    onclick="return onLinkClick(event)"
                    ontouchstart="startLinkPress(event, '${safeUrl}', '${safeName}', '${itemId}')" 
                    ontouchend="endLinkPress(event)"
@@ -646,15 +677,13 @@
                    onmouseleave="endLinkPress(event)">${name}</a>`;
     }
 
-    // ✨ 新增：長按事件與彈出視窗控制 ✨
     function startLinkPress(event, url, name, itemId) {
         isLongPressTriggered = false;
         linkPressTimer = setTimeout(() => {
             isLongPressTriggered = true;
             openLinkEditModal(url, name, itemId);
-            // 手機版觸發長按時產生微震動回饋 (如果裝置支援)
             if (navigator.vibrate) navigator.vibrate(50);
-        }, 500); // 500毫秒即判定為長按
+        }, 500);
     }
 
     function endLinkPress(event) {
@@ -662,9 +691,9 @@
     }
 
     function onLinkClick(event) {
-        event.stopPropagation(); // 阻止點擊事件影響到後面的卡片展開
+        event.stopPropagation(); 
         if (isLongPressTriggered) {
-            event.preventDefault(); // 如果已經觸發了長按編輯，就不要開啟網頁
+            event.preventDefault(); 
             return false;
         }
         return true;
@@ -693,7 +722,6 @@
             const oldName = currentEditLink.name;
             const expectedMarkdown = `[${oldName}](${oldUrl})`;
             
-            // 替換原本的網址內容為新的 Markdown 格式
             if (item.notes.includes(expectedMarkdown)) {
                 item.notes = item.notes.replace(expectedMarkdown, `[${newName}](${newUrl})`);
             } else if (item.notes.includes(oldUrl)) {
@@ -716,7 +744,6 @@
             const oldName = currentEditLink.name;
             const expectedMarkdown = `[${oldName}](${oldUrl})`;
             
-            // 移除網址連結，只保留純文字名稱
             if (item.notes.includes(expectedMarkdown)) {
                 item.notes = item.notes.replace(expectedMarkdown, newName);
             } else if (item.notes.includes(oldUrl)) {
@@ -921,7 +948,6 @@
         wrapper.dataset.index = index;
         const catInfo = catIcons[item.cat] || catIcons['other'];
         
-        // ✨ 修改：把 item.id 傳給格式化函數 ✨
         const notesContent = formatTextWithLinks(item.notes, item.id);
         const notesHtml = notesContent ? `<div class="info-row"><i class="fas fa-pen"></i> <span style="flex:1;">${notesContent}</span></div>` : '';
 
