@@ -91,7 +91,7 @@
     }
     .main-add-btn {
       background: var(--card-blue); color: white; padding: 15px; border-radius: 25px; 
-      text-align: center; font-size: 1.1rem; cursor: pointer; margin-top: 20px; font-weight: bold;
+      text-align: center; font-size: 1.1rem; cursor: margin-top: 20px; font-weight: bold;
       box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
     }
 
@@ -209,7 +209,8 @@
       font-size: 1rem; font-family: inherit; font-weight: 500; outline: none; background: #f8fafc;
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--card-blue); background: #fff; }
-    .form-group textarea { resize: vertical; min-height: 80px; }
+    /* ✨ 這裡加大了備註框的高度 ✨ */
+    .form-group textarea { resize: vertical; min-height: 150px; line-height: 1.5; }
 
     .modal-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 25px; gap: 10px;}
     .btn-save { flex: 1; background: var(--card-blue); color: white; padding: 14px; border-radius: 25px; border: none; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);}
@@ -614,26 +615,23 @@
     let isLongPressTriggered = false;
     let currentEditLink = { url: '', name: '', itemId: '' };
 
-    // ✨ 定義要循環的四種柔和色彩 (黃 -> 綠 -> 紫 -> 藍) ✨
     const badgeColors = [
-        { bg: '#FDF3C6', text: '#8A6D3B' }, // 0: 黃色系
-        { bg: '#DDF1E4', text: '#3C763D' }, // 1: 綠色系
-        { bg: '#EAE0F5', text: '#6A4A87' }, // 2: 紫色系
-        { bg: '#E0EFFF', text: '#31708F' }  // 3: 藍色系
+        { bg: '#FDF3C6', text: '#8A6D3B' }, 
+        { bg: '#DDF1E4', text: '#3C763D' }, 
+        { bg: '#EAE0F5', text: '#6A4A87' }, 
+        { bg: '#E0EFFF', text: '#31708F' }  
     ];
 
-    // ✨ 修改：加入計數器來計算這是第幾個連結 ✨
     function formatTextWithLinks(text, itemId) {
       if (!text) return '';
       let escapedText = text.replace(/\n/g, '<br>');
       
       const combinedRegex = /\[(.*?)\]\((https?:\/\/[^\s<]+?)\)|(https?:\/\/[^\s<]+)/g;
       
-      // 這個計數器會在每個行程項目的備註中，從 0 開始計算出現的連結數量
       let linkCount = 0; 
 
       return escapedText.replace(combinedRegex, (match, mdName, mdUrl, rawUrl) => {
-          let currentCount = linkCount++; // 每次找到連結就+1
+          let currentCount = linkCount++; 
           
           if (mdName && mdUrl) {
               return createAnchor(mdUrl, mdName, itemId, currentCount);
@@ -644,15 +642,12 @@
       });
     }
 
-    // ✨ 修改：為連結套上帶顏色的 Badge 樣式 ✨
     function createAnchor(url, name, itemId, linkIndex) {
         const safeUrl = url.replace(/'/g, "\\'").replace(/"/g, "&quot;");
         const safeName = name.replace(/'/g, "\\'").replace(/"/g, "&quot;");
         
-        // 利用餘數 ( % 4) 讓顏色永遠在 0~3 之間循環 (黃、綠、紫、藍)
         const colorObj = badgeColors[linkIndex % 4];
         
-        // 加入你想要的樣式：背景色、文字色、圓角、取消底線、內邊距
         const badgeStyle = `
             display: inline-block; 
             background-color: ${colorObj.bg}; 
