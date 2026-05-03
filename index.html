@@ -188,7 +188,6 @@
 
     /* --- 6. 航班與記帳本 --- */
     #flight-view, .expense-container, .list-container { padding: 20px; max-width: 600px; margin: 0 auto; }
-    /* ... 略過原本航班、記帳的細部樣式，保留原始設定 ... */
     .flight-section-title { font-size: 1.1rem; font-weight: 900; color: var(--accent-slate); margin: 20px 0 10px 5px; display: flex; align-items: center; gap: 8px;}
     .flight-card-main { background-color: #FAFAFA; border: 1px solid var(--border-color); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
     .flight-card-top { background-color: #F0F4F8; padding: 15px; text-align: center; border-bottom: 1px dashed #cbd5e1;}
@@ -457,9 +456,21 @@
     </div>
   </div>
 
+  <!-- ✅ 這裡修改了：新增交通方式選擇按鈕 (包含汽車、電車、走路) -->
   <div id="trans-modal" class="modal-overlay hidden">
     <div class="modal-box">
       <div class="modal-header"><h3 class="modal-title">編輯交通時間</h3><div class="modal-close" onclick="closeModal('trans-modal')"><i class="fas fa-times"></i></div></div>
+      
+      <!-- 交通方式選擇區塊 -->
+      <div class="form-group" style="text-align: center;">
+        <label>交通方式</label>
+        <div style="display: flex; justify-content: center; gap: 20px; margin-top: 10px;">
+          <div class="trans-icon-btn" data-mode="car" style="font-size: 1.8rem; cursor: pointer; padding: 5px 15px; border-radius: 12px; border: 2px solid var(--card-blue); background: #f8fafc;" onclick="selectTransMode('car')">🚗</div>
+          <div class="trans-icon-btn" data-mode="train" style="font-size: 1.8rem; cursor: pointer; padding: 5px 15px; border-radius: 12px; border: 2px solid transparent; background: #f8fafc;" onclick="selectTransMode('train')">🚃</div>
+          <div class="trans-icon-btn" data-mode="walk" style="font-size: 1.8rem; cursor: pointer; padding: 5px 15px; border-radius: 12px; border: 2px solid transparent; background: #f8fafc;" onclick="selectTransMode('walk')">🚶</div>
+        </div>
+      </div>
+
       <div style="display: flex; gap: 10px;">
         <div class="form-group" style="flex:1;"><label>小時 (hr)</label><input type="number" id="trans-hr" min="0" placeholder="0"></div>
         <div class="form-group" style="flex:1;"><label>分鐘 (min)</label><input type="number" id="trans-min" min="0" max="59" placeholder="30"></div>
@@ -542,7 +553,7 @@
 
     let appState = { trips: [], itineraries: {}, expenses: {}, luggage: {}, souvenir: {}, flights: {} };
 
-    // 🌟 自動抓取即時匯率並顯示在右上角 🌟
+    // 自動抓取即時匯率並顯示在右上角
     async function fetchRealTimeRate() {
       const rateDisplay = document.getElementById('display-exchange-rate');
       try {
@@ -580,9 +591,17 @@
         for (let key in appState.luggage) appState.luggage[key] = toArray(appState.luggage[key]);
         for (let key in appState.souvenir) appState.souvenir[key] = toArray(appState.souvenir[key]);
         
+        // ✅ 這裡修改了：加回你遺漏的 Firebase 陣列修復邏輯，這樣你的行程就不會再全部擠到第一天了！
         for (let key in appState.itineraries) {
-            let tripDays = toArray(appState.itineraries[key]);
-            appState.itineraries[key] = tripDays.map(day => toArray(day));
+            let originalDays = appState.itineraries[key];
+            let tripDaysArray = [];
+            for (let dayIndex in originalDays) {
+                tripDaysArray[dayIndex] = toArray(originalDays[dayIndex]);
+            }
+            for (let i = 0; i < tripDaysArray.length; i++) {
+                if (!tripDaysArray[i]) tripDaysArray[i] = [];
+            }
+            appState.itineraries[key] = tripDaysArray;
         }
       }
       
@@ -799,6 +818,7 @@
       badgeElement.classList.add('selected'); appState.currentDayIndex = index; renderItinerary();
     }
 
+    // ✅ 這裡修改了：依照選擇的交通方式顯示不同的 icon (汽車、電車、走路)
     function renderItinerary() {
       const container = document.getElementById('timeline-container'); container.innerHTML = '';
       const tripItems = appState.itineraries[appState.currentTripId];
@@ -827,7 +847,8 @@
         `;
         if(index < items.length - 1) {
            const transText = (item.transTime && item.transTime !== "交通時間") ? item.transTime : '新增交通時間';
-           html += `<div class="transport-connector"><div class="trans-mode-icon">🚗</div><div class="trans-time-text" onclick="event.stopPropagation(); openTransModal('${item.id}')">${transText}</div></div>`;
+           const modeIcon = item.transMode === 'train' ? '🚃' : (item.transMode === 'walk' ? '🚶' : '🚗');
+           html += `<div class="transport-connector"><div class="trans-mode-icon">${modeIcon}</div><div class="trans-time-text" onclick="event.stopPropagation(); openTransModal('${item.id}')">${transText}</div></div>`;
         }
         wrapper.innerHTML = html; container.appendChild(wrapper);
       });
@@ -864,6 +885,7 @@
       modal.classList.remove('hidden');
     }
 
+    // ✅ 這裡修改了：預設給予汽車(car)作為初始交通方式
     function saveItineraryItem() {
       const cat = document.getElementById('iti-category').value; const title = document.getElementById('iti-title').value.trim();
       const time = document.getElementById('iti-time').value; const notes = document.getElementById('iti-notes').value.trim();
@@ -874,7 +896,7 @@
       if (editingItiId) {
         const item = dayItems.find(i => i.id === editingItiId); Object.assign(item, { cat, title, time, notes, imageUrl });
       } else {
-        dayItems.push({ id: 'i' + Date.now(), cat, title, time, notes, transTime: '', imageUrl: imageUrl });
+        dayItems.push({ id: 'i' + Date.now(), cat, title, time, notes, transTime: '', transMode: 'car', imageUrl: imageUrl });
         dayItems.sort((a,b) => a.time.localeCompare(b.time));
       }
       closeModal('itinerary-modal'); renderItinerary(); saveToDatabase();
@@ -889,7 +911,17 @@
       }
     }
 
+    // ✅ 這裡修改了：新增設定交通方式的腳本邏輯
     let editingTransItemId = null;
+    let selectedTransMode = 'car';
+
+    function selectTransMode(mode) {
+      selectedTransMode = mode;
+      document.querySelectorAll('.trans-icon-btn').forEach(btn => {
+        btn.style.borderColor = (btn.dataset.mode === mode) ? 'var(--card-blue)' : 'transparent';
+      });
+    }
+
     function openTransModal(itemId) {
       editingTransItemId = itemId;
       const item = appState.itineraries[appState.currentTripId][appState.currentDayIndex].find(i => i.id === itemId);
@@ -899,6 +931,9 @@
         if(matchHr) hr = matchHr[1]; if(matchMin) min = matchMin[1];
       }
       document.getElementById('trans-hr').value = hr; document.getElementById('trans-min').value = min;
+      
+      selectTransMode(item.transMode || 'car');
+      
       document.getElementById('trans-modal').classList.remove('hidden');
     }
 
@@ -908,7 +943,10 @@
       if(hr && hr > 0) text += hr + "hr "; if(min && min > 0) text += min + "min";
       text = text.trim(); if(text === "") text = "交通時間"; 
       const item = appState.itineraries[appState.currentTripId][appState.currentDayIndex].find(i => i.id === editingTransItemId);
-      if(item) { item.transTime = text; }
+      if(item) { 
+        item.transTime = text; 
+        item.transMode = selectedTransMode; 
+      }
       closeModal('trans-modal'); renderItinerary(); saveToDatabase();
     }
 
