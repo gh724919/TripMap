@@ -438,8 +438,7 @@
         <select id="iti-category">
           <option value="attraction">📸 景點</option>
           <option value="food">🍜 美食</option>
-          <option value="accommodation">🏠 住宿</option>
-          <option value="flight">✈️ 航班</option>
+          <option value="accommodation">🏠 住宿</option> <option value="flight">✈️ 航班</option>
           <option value="shopping">🛍️ 購物</option>
           <option value="other">⭐ 其他</option>
         </select>
@@ -469,16 +468,6 @@
   <div id="trans-modal" class="modal-overlay hidden">
     <div class="modal-box">
       <div class="modal-header"><h3 class="modal-title">編輯交通時間</h3><div class="modal-close" onclick="closeModal('trans-modal')"><i class="fas fa-times"></i></div></div>
-      
-      <div class="form-group">
-        <label>交通方式</label>
-        <select id="trans-mode">
-          <option value="car">🚗 汽車</option>
-          <option value="train">🚆 電車 / 地鐵</option>
-          <option value="walk">🚶 走路</option>
-        </select>
-      </div>
-
       <div style="display: flex; gap: 10px;">
         <div class="form-group" style="flex:1;"><label>小時 (hr)</label><input type="number" id="trans-hr" min="0" placeholder="0"></div>
         <div class="form-group" style="flex:1;"><label>分鐘 (min)</label><input type="number" id="trans-min" min="0" max="59" placeholder="30"></div>
@@ -537,10 +526,11 @@
     let EXCHANGE_RATE = 0.21; 
     const DAYS_OF_WEEK = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
     
+    // 🌟 在這裡加入了 accommodation 的圖示和顏色 🌟
     const catIcons = {
       'attraction': { icon: 'fa-camera', color: '#3b82f6' },
       'food': { icon: 'fa-utensils', color: '#f59e0b' },
-      'accommodation': { icon: 'fa-home', color: '#8b5cf6' },
+      'accommodation': { icon: 'fa-home', color: '#8b5cf6' }, // 紫色房子
       'flight': { icon: 'fa-plane', color: '#64748b' },
       'shopping': { icon: 'fa-shopping-bag', color: '#ec4899' },
       'other': { icon: 'fa-star', color: '#10b981' }
@@ -844,16 +834,9 @@
             <div class="drag-handle" onclick="event.stopPropagation()"><i class="fas fa-grip-vertical"></i></div>
           </div>
         `;
-        
-        // 🌟 這裡負責顯示正確的交通圖示 🌟
         if(index < items.length - 1) {
            const transText = (item.transTime && item.transTime !== "交通時間") ? item.transTime : '新增交通時間';
-           let transIcon = '🚗';
-           if (item.transMode === 'train') transIcon = '🚆';
-           if (item.transMode === 'walk') transIcon = '🚶';
-
-           // 加上 onclick 讓點擊圖示也能打開視窗
-           html += `<div class="transport-connector"><div class="trans-mode-icon" style="cursor:pointer;" onclick="event.stopPropagation(); openTransModal('${item.id}')">${transIcon}</div><div class="trans-time-text" onclick="event.stopPropagation(); openTransModal('${item.id}')">${transText}</div></div>`;
+           html += `<div class="transport-connector"><div class="trans-mode-icon">🚗</div><div class="trans-time-text" onclick="event.stopPropagation(); openTransModal('${item.id}')">${transText}</div></div>`;
         }
         wrapper.innerHTML = html; container.appendChild(wrapper);
       });
@@ -900,7 +883,7 @@
       if (editingItiId) {
         const item = dayItems.find(i => i.id === editingItiId); Object.assign(item, { cat, title, time, notes, imageUrl });
       } else {
-        dayItems.push({ id: 'i' + Date.now(), cat, title, time, notes, transTime: '', transMode: 'car', imageUrl: imageUrl });
+        dayItems.push({ id: 'i' + Date.now(), cat, title, time, notes, transTime: '', imageUrl: imageUrl });
         dayItems.sort((a,b) => a.time.localeCompare(b.time));
       }
       closeModal('itinerary-modal'); renderItinerary(); saveToDatabase();
@@ -925,26 +908,16 @@
         if(matchHr) hr = matchHr[1]; if(matchMin) min = matchMin[1];
       }
       document.getElementById('trans-hr').value = hr; document.getElementById('trans-min').value = min;
-      
-      // 🌟 讀取舊的交通方式，如果沒有就預設汽車 🌟
-      document.getElementById('trans-mode').value = item.transMode || 'car';
-      
       document.getElementById('trans-modal').classList.remove('hidden');
     }
 
     function saveTransTime() {
       const hr = document.getElementById('trans-hr').value; const min = document.getElementById('trans-min').value;
-      const mode = document.getElementById('trans-mode').value; // 🌟 抓取選擇的交通方式 🌟
-      
       let text = "";
       if(hr && hr > 0) text += hr + "hr "; if(min && min > 0) text += min + "min";
       text = text.trim(); if(text === "") text = "交通時間"; 
-      
       const item = appState.itineraries[appState.currentTripId][appState.currentDayIndex].find(i => i.id === editingTransItemId);
-      if(item) { 
-        item.transTime = text; 
-        item.transMode = mode; // 🌟 儲存交通方式 🌟
-      }
+      if(item) { item.transTime = text; }
       closeModal('trans-modal'); renderItinerary(); saveToDatabase();
     }
 
