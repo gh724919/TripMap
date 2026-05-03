@@ -9,12 +9,12 @@
   <link rel="icon" type="image/png" sizes="192x192" href="50251f50bb741cd8af5063c6fad47b19.jpg">
   
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-  <!-- 用來產生 PDF 的兩個套件 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
+  <!-- 支援 PDF 匯出的函式庫 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
   <style>
     /* --- 1. 全域變數與基礎設定 --- */
     :root {
@@ -322,56 +322,6 @@
     .shortcut-item i { font-size: 1.4rem; }
     
     .text-center { text-align: center; }
-
-    /* 🌟🌟🌟 新增：手帳風 PDF 專用排版 🌟🌟🌟 */
-    .pdf-export-wrapper { position: absolute; left: -9999px; top: 0; width: 794px; background: #fff; z-index: -100; pointer-events: none; }
-    
-    .pdf-page-container { 
-      width: 794px; height: 1123px; overflow: hidden; position: relative;
-      background-color: #ffffff; 
-      background-image: linear-gradient(#e0e7ff 2px, transparent 2px), linear-gradient(90deg, #e0e7ff 2px, transparent 2px); 
-      background-size: 30px 30px; 
-      border: 20px solid #dbeafe; border-radius: 40px; 
-      padding: 40px 40px; box-sizing: border-box; 
-      font-family: 'Microsoft JhengHei', sans-serif; color: #333; 
-    }
-    
-    .pdf-header { display: flex; align-items: baseline; gap: 20px; margin-bottom: 30px; border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 10px;}
-    .pdf-day-text { font-family: 'Dancing Script', cursive; font-size: 4.5rem; color: #d4a39b; margin: 0; font-weight: bold; line-height: 1;}
-    .pdf-trip-info { font-size: 1.5rem; letter-spacing: 2px; color: #333; font-style: italic; font-weight: bold; }
-
-    .pdf-timeline-columns { display: flex; gap: 20px; height: 900px; }
-    .pdf-timeline-wrap { flex: 1; display: flex; flex-direction: column; position: relative; }
-    .pdf-timeline-columns.is-dual .pdf-timeline-wrap:first-child { border-right: 2px dashed #cbd5e1; padding-right: 15px; }
-    
-    .pdf-item { display: flex; margin-bottom: 20px; position: relative; }
-    .pdf-timeline-columns.is-dual .pdf-time { width: 55px; font-size: 1.1rem; }
-    .pdf-time { width: 80px; font-weight: 900; font-size: 1.3rem; color: #333; padding-top: 2px; flex-shrink: 0; text-align: left;}
-    
-    .pdf-divider { width: 2px; background: repeating-linear-gradient(to bottom, #888 0, #888 5px, transparent 5px, transparent 10px); margin: 0 15px; position: relative; }
-    .pdf-content { flex: 1; padding-top: 2px; position: relative;}
-    
-    .pdf-timeline-columns.is-dual .pdf-title { font-size: 1.1rem; }
-    .pdf-title { font-weight: 900; font-size: 1.3rem; color: #111; margin-bottom: 6px;}
-    
-    .pdf-timeline-columns.is-dual .pdf-notes { font-size: 0.85rem; margin-bottom: 5px; }
-    .pdf-notes { font-size: 1rem; color: #555; line-height: 1.5; margin-bottom: 10px;}
-    
-    .pdf-image { max-width: 100%; max-height: 150px; object-fit: cover; border-radius: 4px; border: 6px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transform: rotate(-2deg); margin-top: 5px; margin-bottom: 5px;}
-    .pdf-item:nth-child(even) .pdf-image { transform: rotate(2deg); }
-    
-    .pdf-trans-row { margin-left: 110px; padding: 0 0 15px 15px; border-left: 2px dashed #cbd5e1; color: #64748b; font-size: 0.9rem; font-weight: bold; display: flex; align-items: center; gap: 8px; margin-top: -10px; margin-bottom: 0;}
-    .pdf-timeline-columns.is-dual .pdf-trans-row { margin-left: 85px; padding-bottom: 10px; font-size: 0.8rem;}
-    .pdf-trans-icon { font-size: 1.2rem; background: white; border-radius: 50%; padding: 2px;}
-    .pdf-timeline-columns.is-dual .pdf-trans-icon { font-size: 1rem; }
-
-    /* 必買清單樣式 */
-    .pdf-sov-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-    .pdf-sov-item { background: white; padding: 15px; border-radius: 16px; border: 2px solid #e2e8f0; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    .pdf-sov-img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; }
-    .pdf-sov-title { font-weight: 900; font-size: 1.2rem; color: #0A2463; margin: 0; display: flex; align-items: center; gap: 8px; }
-    .pdf-sov-check { width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 4px; display: inline-block; text-align: center; line-height: 20px; font-size: 14px; font-weight: bold; color: white;}
-    .pdf-sov-check.done { background-color: #007BFF; border-color: #007BFF; }
   </style>
 </head>
 <body>
@@ -387,18 +337,16 @@
     <div class="nav-bar">
       <div class="back-btn" onclick="switchPage('trips-list-view')"><i class="fas fa-home"></i> 總覽</div>
       <div style="font-size: 1.2rem; font-weight: 900; color: var(--accent-slate);" id="itinerary-title">行程表規劃</div>
-      
-      <!-- 🌟 新增的匯出 PDF 按鈕，完美的放在原本的設定齒輪旁邊 🌟 -->
-      <div style="display: flex; align-items: center; gap: 15px;">
-        <button id="pdf-export-btn" class="clickable" style="background: var(--accent-slate); color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);" onclick="exportFullTripToPDF()">
-          <i class="fas fa-file-pdf"></i> 匯出
-        </button>
+      <div style="display: flex; gap: 15px; align-items: center;">
+        <!-- PDF 匯出按鈕 -->
+        <div style="color: var(--accent-slate); font-size: 1.2rem; cursor: pointer;" onclick="exportItineraryToPDF()">
+          <i class="fas fa-file-pdf"></i>
+        </div>
         <div style="color: var(--accent-slate); font-size: 1.3rem; cursor: pointer;" onclick="openTripModal(appState.currentTripId)">
           <i class="fas fa-cog"></i>
         </div>
       </div>
     </div>
-    
     <div class="itinerary-hero"><div class="hero-edit-btn" onclick="openImageModal()"><i class="fas fa-camera"></i> 更改封面</div></div>
     <div class="date-slider" id="date-container"></div>
     <div class="timeline" id="timeline-container"></div>
@@ -478,13 +426,108 @@
     </div>
   </div>
 
-  <div id="trip-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title" id="trip-modal-title">新增旅程</h3><div class="modal-close" onclick="closeModal('trip-modal')"><i class="fas fa-times"></i></div></div><div class="form-group"><label>旅程名稱</label><input type="text" id="trip-name" placeholder="例如：東京五日遊"></div><div class="form-group"><label>開始日期</label><input type="date" id="trip-start"></div><div class="form-group"><label>結束日期</label><input type="date" id="trip-end"></div><div class="modal-actions"><button class="btn-delete-item clickable" id="trip-del-btn" onclick="deleteCurrentTrip()">刪除</button><button class="btn-save clickable" onclick="saveTrip()">儲存</button></div></div></div>
-  <div id="itinerary-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title" id="iti-modal-title">新增行程</h3><div class="modal-close" onclick="closeModal('itinerary-modal')"><i class="fas fa-times"></i></div></div><div class="form-group"><label>分類</label><select id="iti-category"><option value="attraction">📸 景點</option><option value="food">🍜 美食</option><option value="accommodation">🏠 住宿</option><option value="flight">✈️ 航班</option><option value="shopping">🛍️ 購物</option><option value="other">⭐ 其他</option></select></div><div class="form-group"><label>名稱 / 標題</label><input type="text" id="iti-title" placeholder="例如：清水寺"></div><div class="form-group"><label>時間</label><input type="time" id="iti-time"></div><div class="form-group"><label>備註 (選填)</label><textarea id="iti-notes" placeholder="例如：記得帶預約條碼、必吃抹茶冰淇淋..."></textarea></div><div class="form-group"><label>圖片網址 (選填)</label><input type="text" id="iti-image" placeholder="貼上圖片連結..."></div><div class="modal-actions"><button class="btn-delete-item clickable" id="iti-del-btn" onclick="deleteCurrentIti()">刪除</button><button class="btn-save clickable" onclick="saveItineraryItem()">儲存</button></div></div></div>
-  <div id="souvenir-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title" id="souvenir-modal-title">新增必買物品</h3><div class="modal-close" onclick="closeModal('souvenir-modal')"><i class="fas fa-times"></i></div></div><div class="form-group"><label>物品名稱</label><input type="text" id="sov-title" placeholder="例如：Saje 精油"></div><div style="display: flex; gap:10px;"><div class="form-group" style="flex:1;"><label>分類標籤</label><input type="text" id="sov-cat" placeholder="例如：保健/美妝"></div><div class="form-group" style="flex:1;"><label>購買地點</label><input type="text" id="sov-loc" placeholder="例如：專賣店"></div></div><div class="form-group"><label>圖片網址 (選填)</label><input type="text" id="sov-image" placeholder="貼上圖片連結..."></div><div class="form-group"><label>備註心得</label><textarea id="sov-notes" placeholder="例如：天然植物胚芽適合..." style="min-height: 80px;"></textarea></div><div class="modal-actions"><button class="btn-save clickable" style="width:100%;" onclick="saveSouvenir()">確認儲存</button></div></div></div>
-  <div id="trans-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">編輯交通時間</h3><div class="modal-close" onclick="closeModal('trans-modal')"><i class="fas fa-times"></i></div></div><div class="form-group" style="text-align: center;"><label>交通方式</label><div style="display: flex; justify-content: center; gap: 20px; margin-top: 10px;"><div class="trans-icon-btn" data-mode="car" style="font-size: 1.8rem; cursor: pointer; padding: 5px 15px; border-radius: 12px; border: 2px solid var(--card-blue); background: #f8fafc;" onclick="selectTransMode('car')">🚗</div><div class="trans-icon-btn" data-mode="train" style="font-size: 1.8rem; cursor: pointer; padding: 5px 15px; border-radius: 12px; border: 2px solid transparent; background: #f8fafc;" onclick="selectTransMode('train')">🚃</div><div class="trans-icon-btn" data-mode="walk" style="font-size: 1.8rem; cursor: pointer; padding: 5px 15px; border-radius: 12px; border: 2px solid transparent; background: #f8fafc;" onclick="selectTransMode('walk')">🚶</div></div></div><div style="display: flex; gap: 10px;"><div class="form-group" style="flex:1;"><label>小時 (hr)</label><input type="number" id="trans-hr" min="0" placeholder="0"></div><div class="form-group" style="flex:1;"><label>分鐘 (min)</label><input type="number" id="trans-min" min="0" max="59" placeholder="30"></div></div><div class="modal-actions"><button class="btn-save clickable" style="width: 100%;" onclick="saveTransTime()">儲存</button></div></div></div>
-  <div id="expense-edit-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">修改花費</h3><div class="modal-close" onclick="closeModal('expense-edit-modal')"><i class="fas fa-times"></i></div></div><div class="form-group"><label>買什麼？</label><input type="text" id="edit-exp-what"></div><div class="form-group"><label>花費金額 (日幣 ¥)</label><input type="number" id="edit-exp-amount"></div><div class="form-group"><label>誰付的？</label><input type="text" id="edit-exp-who"></div><div class="modal-actions"><button class="btn-delete-item clickable" style="display:block;" onclick="deleteExpenseFromModal()">刪除</button><button class="btn-save clickable" onclick="saveExpenseEdit()">儲存修改</button></div></div></div>
-  <div id="image-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">更換封面圖片</h3><div class="modal-close" onclick="closeModal('image-modal')"><i class="fas fa-times"></i></div></div><div class="form-group"><label>貼上圖片網址 (URL)</label><input type="text" id="hero-image-url" placeholder="https://..."></div><div class="modal-actions"><button class="btn-save clickable" style="width: 100%;" onclick="saveHeroImage()">確認更換</button></div></div></div>
-  <div id="link-edit-modal" class="modal-overlay hidden"><div class="modal-box" style="background: #F4F7FB; padding: 0; max-width: 350px;"><div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; border-radius: 24px 24px 0 0; border-bottom: 1px solid #e2e8f0;"><div style="color: #F5A623; font-weight: bold; cursor: pointer; font-size: 1rem;" onclick="closeModal('link-edit-modal')">取消</div><div style="font-weight: 900; color: #333; font-size: 1.1rem;">編輯連結</div><div style="color: #F5A623; font-weight: bold; cursor: pointer; font-size: 1rem;" onclick="saveLinkEdit()">完成</div></div><div style="padding: 20px;"><div style="margin-bottom: 15px;"><label style="display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 5px; margin-left: 5px;">連結至</label><div style="position: relative;"><input type="text" id="edit-link-url" style="width: 100%; padding: 12px 35px 12px 15px; border: none; border-radius: 12px; font-size: 1rem; outline: none; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); box-sizing: border-box;"><i class="fas fa-times-circle" style="position: absolute; right: 12px; top: 14px; color: #cbd5e1; cursor: pointer;" onclick="document.getElementById('edit-link-url').value=''"></i></div></div><div style="margin-bottom: 20px;"><label style="display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 5px; margin-left: 5px;">名稱</label><div style="position: relative;"><input type="text" id="edit-link-name" style="width: 100%; padding: 12px 35px 12px 15px; border: none; border-radius: 12px; font-size: 1rem; outline: none; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); box-sizing: border-box;"><i class="fas fa-times-circle" style="position: absolute; right: 12px; top: 14px; color: #cbd5e1; cursor: pointer;" onclick="document.getElementById('edit-link-name').value=''"></i></div></div><button class="clickable" style="width: 100%; padding: 14px; border-radius: 12px; border: none; background: #fff; color: #ef4444; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05); text-align: left; padding-left: 15px;" onclick="removeLink()">移除連結</button></div></div></div>
+  <div id="trip-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header"><h3 class="modal-title" id="trip-modal-title">新增旅程</h3><div class="modal-close" onclick="closeModal('trip-modal')"><i class="fas fa-times"></i></div></div>
+      <div class="form-group"><label>旅程名稱</label><input type="text" id="trip-name" placeholder="例如：東京五日遊"></div>
+      <div class="form-group"><label>開始日期</label><input type="date" id="trip-start"></div>
+      <div class="form-group"><label>結束日期</label><input type="date" id="trip-end"></div>
+      <div class="modal-actions">
+        <button class="btn-delete-item clickable" id="trip-del-btn" onclick="deleteCurrentTrip()">刪除</button>
+        <button class="btn-save clickable" onclick="saveTrip()">儲存</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="itinerary-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header"><h3 class="modal-title" id="iti-modal-title">新增行程</h3><div class="modal-close" onclick="closeModal('itinerary-modal')"><i class="fas fa-times"></i></div></div>
+      <div class="form-group">
+        <label>分類</label>
+        <select id="iti-category">
+          <option value="attraction">📸 景點</option>
+          <option value="food">🍜 美食</option>
+          <option value="accommodation">🏠 住宿</option>
+          <option value="flight">✈️ 航班</option>
+          <option value="shopping">🛍️ 購物</option>
+          <option value="other">⭐ 其他</option>
+        </select>
+      </div>
+      <div class="form-group"><label>名稱 / 標題</label><input type="text" id="iti-title" placeholder="例如：清水寺"></div>
+      <div class="form-group"><label>時間</label><input type="time" id="iti-time"></div>
+      <div class="form-group"><label>備註 (選填)</label><textarea id="iti-notes" placeholder="例如：記得帶預約條碼、必吃抹茶冰淇淋..."></textarea></div>
+      <div class="form-group"><label>圖片網址 (選填)</label><input type="text" id="iti-image" placeholder="貼上圖片連結..."></div>
+      <div class="modal-actions"><button class="btn-delete-item clickable" id="iti-del-btn" onclick="deleteCurrentIti()">刪除</button><button class="btn-save clickable" onclick="saveItineraryItem()">儲存</button></div>
+    </div>
+  </div>
+
+  <div id="souvenir-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header"><h3 class="modal-title" id="souvenir-modal-title">新增必買物品</h3><div class="modal-close" onclick="closeModal('souvenir-modal')"><i class="fas fa-times"></i></div></div>
+      <div class="form-group"><label>物品名稱</label><input type="text" id="sov-title" placeholder="例如：Saje 精油"></div>
+      <div style="display: flex; gap:10px;">
+        <div class="form-group" style="flex:1;"><label>分類標籤</label><input type="text" id="sov-cat" placeholder="例如：保健/美妝"></div>
+        <div class="form-group" style="flex:1;"><label>購買地點</label><input type="text" id="sov-loc" placeholder="例如：專賣店"></div>
+      </div>
+      <div class="form-group"><label>圖片網址 (選填)</label><input type="text" id="sov-image" placeholder="貼上圖片連結..."></div>
+      <div class="form-group"><label>備註心得</label><textarea id="sov-notes" placeholder="例如：天然植物胚芽適合..." style="min-height: 80px;"></textarea></div>
+      <div class="modal-actions"><button class="btn-save clickable" style="width:100%;" onclick="saveSouvenir()">確認儲存</button></div>
+    </div>
+  </div>
+
+  <div id="trans-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header"><h3 class="modal-title">編輯交通時間</h3><div class="modal-close" onclick="closeModal('trans-modal')"><i class="fas fa-times"></i></div></div>
+      
+      <div class="form-group">
+        <label>交通方式</label>
+        <select id="trans-mode">
+          <option value="car">🚗 汽車</option>
+          <option value="train">🚆 電車 / 地鐵</option>
+          <option value="walk">🚶 走路</option>
+        </select>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <div class="form-group" style="flex:1;"><label>小時 (hr)</label><input type="number" id="trans-hr" min="0" placeholder="0"></div>
+        <div class="form-group" style="flex:1;"><label>分鐘 (min)</label><input type="number" id="trans-min" min="0" max="59" placeholder="30"></div>
+      </div>
+      <div class="modal-actions"><button class="btn-save clickable" style="width: 100%;" onclick="saveTransTime()">儲存</button></div>
+    </div>
+  </div>
+
+  <div id="expense-edit-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header"><h3 class="modal-title">修改花費</h3><div class="modal-close" onclick="closeModal('expense-edit-modal')"><i class="fas fa-times"></i></div></div>
+      <div class="form-group"><label>買什麼？</label><input type="text" id="edit-exp-what"></div>
+      <div class="form-group"><label>花費金額 (日幣 ¥)</label><input type="number" id="edit-exp-amount"></div>
+      <div class="form-group"><label>誰付的？</label><input type="text" id="edit-exp-who"></div>
+      <div class="modal-actions"><button class="btn-delete-item clickable" style="display:block;" onclick="deleteExpenseFromModal()">刪除</button><button class="btn-save clickable" onclick="saveExpenseEdit()">儲存修改</button></div>
+    </div>
+  </div>
+
+  <div id="image-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header"><h3 class="modal-title">更換封面圖片</h3><div class="modal-close" onclick="closeModal('image-modal')"><i class="fas fa-times"></i></div></div>
+      <div class="form-group"><label>貼上圖片網址 (URL)</label><input type="text" id="hero-image-url" placeholder="https://..."></div>
+      <div class="modal-actions"><button class="btn-save clickable" style="width: 100%;" onclick="saveHeroImage()">確認更換</button></div>
+    </div>
+  </div>
+
+  <div id="link-edit-modal" class="modal-overlay hidden">
+    <div class="modal-box" style="background: #F4F7FB; padding: 0; max-width: 350px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; border-radius: 24px 24px 0 0; border-bottom: 1px solid #e2e8f0;">
+        <div style="color: #F5A623; font-weight: bold; cursor: pointer; font-size: 1rem;" onclick="closeModal('link-edit-modal')">取消</div>
+        <div style="font-weight: 900; color: #333; font-size: 1.1rem;">編輯連結</div>
+        <div style="color: #F5A623; font-weight: bold; cursor: pointer; font-size: 1rem;" onclick="saveLinkEdit()">完成</div>
+      </div>
+      <div style="padding: 20px;">
+        <div style="margin-bottom: 15px;"><label style="display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 5px; margin-left: 5px;">連結至</label><div style="position: relative;"><input type="text" id="edit-link-url" style="width: 100%; padding: 12px 35px 12px 15px; border: none; border-radius: 12px; font-size: 1rem; outline: none; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); box-sizing: border-box;"><i class="fas fa-times-circle" style="position: absolute; right: 12px; top: 14px; color: #cbd5e1; cursor: pointer;" onclick="document.getElementById('edit-link-url').value=''"></i></div></div>
+        <div style="margin-bottom: 20px;"><label style="display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 5px; margin-left: 5px;">名稱</label><div style="position: relative;"><input type="text" id="edit-link-name" style="width: 100%; padding: 12px 35px 12px 15px; border: none; border-radius: 12px; font-size: 1rem; outline: none; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); box-sizing: border-box;"><i class="fas fa-times-circle" style="position: absolute; right: 12px; top: 14px; color: #cbd5e1; cursor: pointer;" onclick="document.getElementById('edit-link-name').value=''"></i></div></div>
+        <button class="clickable" style="width: 100%; padding: 14px; border-radius: 12px; border: none; background: #fff; color: #ef4444; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05); text-align: left; padding-left: 15px;" onclick="removeLink()">移除連結</button>
+      </div>
+    </div>
+  </div>
 
   <div class="fab-add-itinerary hidden" id="fab-add-btn" onclick="openItiModal()"><i class="fas fa-plus"></i></div>
 
@@ -502,7 +545,15 @@
   <script>
     let EXCHANGE_RATE = 0.21; 
     const DAYS_OF_WEEK = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
-    const catIcons = { 'attraction': { icon: 'fa-camera', color: '#3b82f6' }, 'food': { icon: 'fa-utensils', color: '#f59e0b' }, 'accommodation': { icon: 'fa-home', color: '#8b5cf6' }, 'flight': { icon: 'fa-plane', color: '#64748b' }, 'shopping': { icon: 'fa-shopping-bag', color: '#ec4899' }, 'other': { icon: 'fa-star', color: '#10b981' } };
+    
+    const catIcons = {
+      'attraction': { icon: 'fa-camera', color: '#3b82f6' },
+      'food': { icon: 'fa-utensils', color: '#f59e0b' },
+      'accommodation': { icon: 'fa-home', color: '#8b5cf6' },
+      'flight': { icon: 'fa-plane', color: '#64748b' },
+      'shopping': { icon: 'fa-shopping-bag', color: '#ec4899' },
+      'other': { icon: 'fa-star', color: '#10b981' }
+    };
     
     const firebaseConfig = {
       apiKey: "AIzaSyDZXJ93GdCcCdVDtuxSnSQ4NxwWauCA3Cg",
@@ -527,10 +578,16 @@
         const data = await response.json();
         if (data && data.rates && data.rates.TWD) {
           EXCHANGE_RATE = data.rates.TWD;
+          console.log("💰 即時匯率更新成功：1 日幣 = " + EXCHANGE_RATE + " 台幣");
+          
           if (rateDisplay) rateDisplay.innerText = `即時匯率: ${EXCHANGE_RATE.toFixed(4)}`;
-          if (appState.currentTripId) { renderExpenses(); }
+          
+          if (appState.currentTripId) {
+            renderExpenses();
+          }
         }
       } catch (error) {
+        console.log("無法獲取即時匯率，將繼續使用預設匯率 0.21", error);
         if (rateDisplay) rateDisplay.innerText = `預設匯率: ${EXCHANGE_RATE}`;
       }
     }
@@ -552,11 +609,8 @@
         for (let key in appState.souvenir) appState.souvenir[key] = toArray(appState.souvenir[key]);
         
         for (let key in appState.itineraries) {
-            let originalDays = appState.itineraries[key];
-            let tripDaysArray = [];
-            for (let dayIndex in originalDays) { tripDaysArray[dayIndex] = toArray(originalDays[dayIndex]); }
-            for (let i = 0; i < tripDaysArray.length; i++) { if (!tripDaysArray[i]) tripDaysArray[i] = []; }
-            appState.itineraries[key] = tripDaysArray;
+            let tripDays = toArray(appState.itineraries[key]);
+            appState.itineraries[key] = tripDays.map(day => toArray(day));
         }
       }
       
@@ -564,7 +618,10 @@
       if(appState.currentTripId) {
           const currentTrip = appState.trips.find(t => t.id === appState.currentTripId);
           if (currentTrip) { generateDaysForTrip(currentTrip); }
-          renderExpenses(); renderChecklist('luggage'); renderSouvenir(); renderFlightInfo(); 
+          renderExpenses();
+          renderChecklist('luggage');
+          renderSouvenir(); 
+          renderFlightInfo(); 
       }
     });
 
@@ -574,6 +631,8 @@
     let linkPressTimer = null;
     let isLongPressTriggered = false;
     let currentEditLink = { url: '', name: '', itemId: '' };
+
+    const badgeColors = [ { bg: '#FDF3C6', text: '#8A6D3B' }, { bg: '#DDF1E4', text: '#3C763D' }, { bg: '#EAE0F5', text: '#6A4A87' }, { bg: '#E0EFFF', text: '#31708F' } ];
 
     function formatTextWithLinks(text, itemId) {
       if (!text) return '';
@@ -593,7 +652,7 @@
         const safeName = name.replace(/'/g, "\\'").replace(/"/g, "&quot;");
         const colorObj = badgeColors[linkIndex % 4];
         const badgeStyle = `display: inline-block; background-color: ${colorObj.bg}; color: ${colorObj.text}; text-decoration: none; padding: 2px 10px; border-radius: 6px; font-weight: bold; margin: 2px 0; word-break: break-all;`;
-        return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="${badgeStyle}" onclick="return onLinkClick(event)" ontouchstart="startLinkPress(event, '${safeUrl}', '${safeName}', '${itemId}')" ontouchend="endLinkPress(event)" ontouchmove="endLinkPress(event)" ontouchcancel="endLinkPress(event)" onmousedown="startLinkPress(event, '${safeUrl}', '${safeName}', '${itemId}')" onmouseup="endLinkPress(event)" onmouseleave="endLinkPress(event)">${name}</a>`;
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="${badgeStyle}" onclick="return onLinkClick(event)" ontouchstart="startLinkPress(event, '${safeUrl}', '${safeName}', '${itemId}')" ontouchend="endLinkPress(event)" ontouchmove="endLinkPress(event)" ontouchstart="endLinkPress(event)" onmousedown="startLinkPress(event, '${safeUrl}', '${safeName}', '${itemId}')" onmouseup="endLinkPress(event)" onmouseleave="endLinkPress(event)">${name}</a>`;
     }
 
     function startLinkPress(event, url, name, itemId) { isLongPressTriggered = false; linkPressTimer = setTimeout(() => { isLongPressTriggered = true; openLinkEditModal(url, name, itemId); if (navigator.vibrate) navigator.vibrate(50); }, 500); }
@@ -679,7 +738,8 @@
       if(trip.heroImage) { heroEl.style.backgroundImage = `url('${trip.heroImage}')`; } 
       else { heroEl.style.backgroundImage = `url('https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=600&q=80')`; }
 
-      generateDaysForTrip(trip); renderExpenses(); renderChecklist('luggage'); renderSouvenir(); renderFlightInfo();
+      generateDaysForTrip(trip);
+      renderExpenses(); renderChecklist('luggage'); renderSouvenir(); renderFlightInfo();
       switchPage('itinerary-view');
     }
 
@@ -790,19 +850,24 @@
               <div class="item-title-group"><div class="item-time">${item.time}</div><h3 class="item-title">${item.title}</h3></div>
             </div>
             ${(notesHtml || imageHtml) ? `<div class="item-content">${notesHtml}${imageHtml}</div>` : ''}
-            <div class="drag-handle no-print" onclick="event.stopPropagation()"><i class="fas fa-grip-vertical"></i></div>
+            <div class="drag-handle" onclick="event.stopPropagation()"><i class="fas fa-grip-vertical"></i></div>
           </div>
         `;
+        
         if(index < items.length - 1) {
            const transText = (item.transTime && item.transTime !== "交通時間") ? item.transTime : '新增交通時間';
-           const modeIcon = item.transMode === 'train' ? '🚃' : (item.transMode === 'walk' ? '🚶' : '🚗');
-           html += `<div class="transport-connector"><div class="trans-mode-icon" style="cursor:pointer;" onclick="event.stopPropagation(); openTransModal('${item.id}')">${modeIcon}</div><div class="trans-time-text" onclick="event.stopPropagation(); openTransModal('${item.id}')">${transText}</div></div>`;
+           let transIcon = '🚗';
+           if (item.transMode === 'train') transIcon = '🚆';
+           if (item.transMode === 'walk') transIcon = '🚶';
+
+           html += `<div class="transport-connector"><div class="trans-mode-icon" style="cursor:pointer;" onclick="event.stopPropagation(); openTransModal('${item.id}')">${transIcon}</div><div class="trans-time-text" onclick="event.stopPropagation(); openTransModal('${item.id}')">${transText}</div></div>`;
         }
         wrapper.innerHTML = html; container.appendChild(wrapper);
       });
 
       if(sortableInst) sortableInst.destroy();
-      sortableInst = new Sortable(container, { handle: '.drag-handle', animation: 150, ghostClass: 'dragging',
+      sortableInst = new Sortable(container, {
+        handle: '.drag-handle', animation: 150, ghostClass: 'dragging',
         onEnd: function (evt) {
           const array = appState.itineraries[appState.currentTripId][appState.currentDayIndex];
           const movedItem = array.splice(evt.oldIndex, 1)[0]; array.splice(evt.newIndex, 0, movedItem);
@@ -820,11 +885,14 @@
         titleEl.innerText = "編輯行程";
         document.getElementById('iti-category').value = item.cat; document.getElementById('iti-title').value = item.title;
         document.getElementById('iti-time').value = item.time; document.getElementById('iti-notes').value = item.notes || "";
-        document.getElementById('iti-image').value = item.imageUrl || ""; delBtn.style.display = 'block';
+        document.getElementById('iti-image').value = item.imageUrl || "";
+        delBtn.style.display = 'block';
       } else {
-        titleEl.innerText = "新增行程"; document.getElementById('iti-category').value = 'attraction'; document.getElementById('iti-title').value = "";
+        titleEl.innerText = "新增行程";
+        document.getElementById('iti-category').value = 'attraction'; document.getElementById('iti-title').value = "";
         document.getElementById('iti-time').value = "12:00"; document.getElementById('iti-notes').value = "";
-        document.getElementById('iti-image').value = ""; delBtn.style.display = 'none';
+        document.getElementById('iti-image').value = "";
+        delBtn.style.display = 'none';
       }
       modal.classList.remove('hidden');
     }
@@ -855,13 +923,6 @@
     }
 
     let editingTransItemId = null;
-    let selectedTransMode = 'car';
-
-    function selectTransMode(mode) {
-      selectedTransMode = mode;
-      document.querySelectorAll('.trans-icon-btn').forEach(btn => { btn.style.borderColor = (btn.dataset.mode === mode) ? 'var(--card-blue)' : 'transparent'; });
-    }
-
     function openTransModal(itemId) {
       editingTransItemId = itemId;
       const item = appState.itineraries[appState.currentTripId][appState.currentDayIndex].find(i => i.id === itemId);
@@ -871,15 +932,23 @@
         if(matchHr) hr = matchHr[1]; if(matchMin) min = matchMin[1];
       }
       document.getElementById('trans-hr').value = hr; document.getElementById('trans-min').value = min;
-      selectTransMode(item.transMode || 'car'); document.getElementById('trans-modal').classList.remove('hidden');
+      document.getElementById('trans-mode').value = item.transMode || 'car';
+      document.getElementById('trans-modal').classList.remove('hidden');
     }
 
     function saveTransTime() {
       const hr = document.getElementById('trans-hr').value; const min = document.getElementById('trans-min').value;
+      const mode = document.getElementById('trans-mode').value; 
+      
       let text = "";
-      if(hr && hr > 0) text += hr + "hr "; if(min && min > 0) text += min + "min"; text = text.trim(); if(text === "") text = "交通時間"; 
+      if(hr && hr > 0) text += hr + "hr "; if(min && min > 0) text += min + "min";
+      text = text.trim(); if(text === "") text = "交通時間"; 
+      
       const item = appState.itineraries[appState.currentTripId][appState.currentDayIndex].find(i => i.id === editingTransItemId);
-      if(item) { item.transTime = text; item.transMode = selectedTransMode; }
+      if(item) { 
+        item.transTime = text; 
+        item.transMode = mode;
+      }
       closeModal('trans-modal'); renderItinerary(); saveToDatabase();
     }
 
@@ -1088,146 +1157,88 @@
 
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    /* 🌟🌟🌟 新增：跨網域圖片抓取小精靈 (Proxy) 🌟🌟🌟 */
-    function getCorsProxy(url) {
-      if (!url) return '';
-      if (url.startsWith('http')) {
-        return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
-      }
-      return url;
-    }
-
-    /* 🌟🌟🌟 新增：滿版 A4、自動雙排手帳風 PDF 匯出引擎 🌟🌟🌟 */
-    async function exportFullTripToPDF() {
-      const btn = document.getElementById('pdf-export-btn');
-      const originalText = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 製作中...';
-      btn.style.pointerEvents = 'none';
-
-      try {
+    /**
+     * 匯出 PDF 功能：將當前旅程的所有天數行程渲染並下載
+     */
+    async function exportItineraryToPDF() {
         const trip = appState.trips.find(t => t.id === appState.currentTripId);
-        if (!trip) throw new Error("找不到旅程");
-        const tripDays = appState.itineraries[trip.id] || [];
-        if (tripDays.length === 0) {
-            alert("旅程還是空的喔，先加點行程再匯出吧！");
-            btn.innerHTML = originalText; btn.style.pointerEvents = 'auto'; return;
-        }
+        if (!trip) return;
 
+        // 提示使用者正在處理（避免重複點擊）
+        const btn = event.currentTarget;
+        const originalIcon = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+        // 1. 建立一個臨時的隱藏容器來排版 PDF 內容
+        const printArea = document.createElement('div');
+        printArea.style.padding = "20px";
+        printArea.style.backgroundColor = "#F4F7FB";
+        printArea.style.color = "#333";
+        printArea.style.fontFamily = "var(--base-font)";
+
+        // 2. 插入封面與標題
+        let html = `
+            <div style="text-align: center; padding-bottom: 20px; border-bottom: 2px solid #007BFF; margin-bottom: 20px;">
+                <h1 style="color: #0A2463; margin-bottom: 5px;">${trip.name} 旅遊計畫</h1>
+                <p style="color: #64748B;">日期：${trip.start.replace(/-/g, '/')} - ${trip.end.replace(/-/g, '/')}</p>
+            </div>
+        `;
+
+        // 3. 遍歷所有天數並抓取行程內容
+        const allDays = appState.itineraries[trip.id] || [];
         const startDate = new Date(trip.start);
-        const year = startDate.getFullYear();
 
-        const exportContainer = document.createElement('div');
-        exportContainer.className = 'pdf-export-wrapper';
-        document.body.appendChild(exportContainer);
+        for (let d = 0; d < allDays.length; d++) {
+            const currentDate = new Date(startDate);
+            currentDate.setDate(startDate.getDate() + d);
+            const dateString = `${currentDate.getMonth() + 1}/${currentDate.getDate()} (${DAYS_OF_WEEK[currentDate.getDay()]})`;
+            
+            html += `<h2 style="color: #007BFF; margin-top: 30px; border-left: 5px solid #007BFF; padding-left: 10px;">Day ${d + 1} - ${dateString}</h2>`;
 
-        for (let i = 0; i < tripDays.length; i++) {
-          const items = tripDays[i] || [];
-          const isDual = items.length > 5;
-          const dualClass = isDual ? 'is-dual' : '';
-          
-          let pageHtml = `
-            <div class="pdf-page-container" id="pdf-page-${i}">
-              <div class="pdf-header">
-                <h1 class="pdf-day-text">Day ${i + 1}</h1>
-                <div class="pdf-trip-info">${year}, ${trip.name.toUpperCase()}</div>
-              </div>
-              <div class="pdf-timeline-columns ${dualClass}">
-          `;
-
-          if (items.length === 0) {
-            pageHtml += `<div style="width:100%; text-align:center; color:#999; margin-top:50px; font-size:1.5rem; font-weight:bold;">本日無行程</div>`;
-          } else {
-            let leftColumnHtml = `<div class="pdf-timeline-wrap">`;
-            let rightColumnHtml = `<div class="pdf-timeline-wrap">`;
-            const splitIndex = isDual ? Math.ceil(items.length / 2) : items.length;
-
-            items.forEach((item, index) => {
-              const safeImgUrl = getCorsProxy(item.imageUrl);
-              let plainNotes = item.notes ? item.notes.replace(/\[(.*?)\]\(.*?\)/g, '$1') : '';
-              
-              let itemHtml = `
-                <div class="pdf-item">
-                  <div class="pdf-time">${item.time}</div>
-                  <div class="pdf-divider"></div>
-                  <div class="pdf-content">
-                    <div class="pdf-title">${item.title}</div>
-                    ${plainNotes ? `<div class="pdf-notes">${plainNotes}</div>` : ''}
-                    ${safeImgUrl ? `<img src="${safeImgUrl}" class="pdf-image" crossorigin="anonymous">` : ''}
-                  </div>
-                </div>
-              `;
-              
-              if(index < items.length - 1 && index !== splitIndex - 1) {
-                 const transText = (item.transTime && item.transTime !== "交通時間") ? item.transTime : '';
-                 const modeIcon = item.transMode === 'train' ? '🚃' : (item.transMode === 'walk' ? '🚶' : '🚗');
-                 itemHtml += `<div class="pdf-trans-row"><span class="pdf-trans-icon">${modeIcon}</span> ${transText}</div>`;
-              }
-
-              if (index < splitIndex) leftColumnHtml += itemHtml;
-              else rightColumnHtml += itemHtml;
-            });
-
-            leftColumnHtml += `</div>`;
-            rightColumnHtml += `</div>`;
-            pageHtml += leftColumnHtml;
-            if (isDual) pageHtml += rightColumnHtml;
-          }
-          pageHtml += `</div></div>`;
-          exportContainer.innerHTML += pageHtml;
+            const items = allDays[d] || [];
+            if (items.length === 0) {
+                html += `<p style="color: #94A3B8; padding-left: 15px;">本日尚無規劃行程</p>`;
+            } else {
+                items.forEach(item => {
+                    const cat = catIcons[item.cat] || catIcons['other'];
+                    // 去除備註中的 Markdown 連結格式，純化文字顯示
+                    const cleanNotes = item.notes ? item.notes.replace(/\[(.*?)\]\(.*?\)/g, '$1') : "";
+                    
+                    html += `
+                        <div style="background: white; border-radius: 10px; padding: 12px; margin: 10px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid ${cat.color};">
+                            <div style="display: flex; justify-content: space-between;">
+                                <strong style="color: #0A2463;">[${item.time}] ${item.title}</strong>
+                            </div>
+                            ${cleanNotes ? `<div style="font-size: 0.9rem; color: #475569; margin-top: 5px;">${cleanNotes}</div>` : ""}
+                            ${item.transTime ? `<div style="font-size: 0.8rem; color: #3B82F6; margin-top: 4px;"><i class="fas fa-clock"></i> 交通：${item.transTime}</div>` : ""}
+                        </div>
+                    `;
+                });
+            }
         }
 
-        const souvenirs = appState.souvenir[trip.id] || [];
-        if (souvenirs.length > 0) {
-          let sovHtml = `
-            <div class="pdf-page-container" id="pdf-page-souvenir">
-              <div class="pdf-header">
-                <h1 class="pdf-day-text">Shopping</h1>
-                <div class="pdf-trip-info">必買清單</div>
-              </div>
-              <div class="pdf-sov-grid">
-          `;
-          souvenirs.forEach(item => {
-            const safeImgUrl = getCorsProxy(item.image) || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=300&q=80';
-            const title = item.title || item.text || '未命名物品';
-            const checkClass = item.done ? 'done' : '';
-            const checkSymbol = item.done ? '✔' : '';
-            sovHtml += `
-              <div class="pdf-sov-item">
-                <img src="${safeImgUrl}" class="pdf-sov-img" crossorigin="anonymous">
-                <h4 class="pdf-sov-title">
-                  <span class="pdf-sov-check ${checkClass}">${checkSymbol}</span>
-                  ${title}
-                </h4>
-              </div>
-            `;
-          });
-          sovHtml += `</div></div>`;
-          exportContainer.innerHTML += sovHtml;
+        printArea.innerHTML = html;
+        document.body.appendChild(printArea);
+
+        // 4. 設定匯出參數並執行匯出
+        const options = {
+            margin: 10,
+            filename: `${trip.name}_行程表.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, logging: false },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        try {
+            await html2pdf().set(options).from(printArea).save();
+        } catch (error) {
+            console.error("PDF 匯出錯誤:", error);
+            alert("匯出 PDF 失敗，請確認網路連線。");
+        } finally {
+            // 恢復按鈕圖示並移除臨時容器
+            btn.innerHTML = originalIcon;
+            document.body.removeChild(printArea);
         }
-
-        const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-
-        const allPages = exportContainer.querySelectorAll('.pdf-page-container');
-        for (let i = 0; i < allPages.length; i++) {
-          const pageEl = allPages[i];
-          const canvas = await html2canvas(pageEl, { scale: 2, useCORS: true, allowTaint: false, backgroundColor: '#ffffff' });
-          const imgData = canvas.toDataURL('image/png');
-          if (i > 0) pdf.addPage();
-          pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        }
-
-        pdf.save(`${trip.name}_手帳行程表.pdf`);
-        document.body.removeChild(exportContainer);
-
-      } catch (error) {
-        console.error("PDF 匯出失敗：", error);
-        alert("匯出發生錯誤！請稍後再試。");
-      } finally {
-        btn.innerHTML = originalText;
-        btn.style.pointerEvents = 'auto';
-      }
     }
 
     window.onload = function() { 
