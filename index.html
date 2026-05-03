@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+  <!-- 用來產生 PDF 的兩個套件 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -58,63 +59,123 @@
       font-size: 0.9rem; font-weight: bold; border-radius: 20px; border: none; cursor: pointer; display: flex; align-items: center; gap: 5px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
-    
-    .nav-actions { display: flex; align-items: center; gap: 12px; }
-    .btn-pdf {
-      background: var(--accent-slate); color: white; padding: 6px 12px; border-radius: 15px; 
-      font-size: 0.8rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 5px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
 
     /* --- 3. 首頁 --- */
     #trips-list-view { 
-      position: relative; max-width: 600px; margin: 0 auto; padding: 20px; min-height: 100vh; z-index: 1;
+      position: relative;
+      max-width: 600px; margin: 0 auto; padding: 20px; 
+      min-height: 100vh;
+      z-index: 1;
     }
+    
     .home-bg-blur {
-      position: fixed; top: -20px; left: -20px; right: -20px; bottom: -20px; 
+      position: fixed;
+      top: -20px; left: -20px; right: -20px; bottom: -20px; 
       background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80');
-      background-size: cover; background-position: center bottom; filter: blur(6px); z-index: -1;
+      background-size: cover;
+      background-position: center bottom;
+      filter: blur(6px); 
+      z-index: -1;
     }
+
     .trip-card {
       padding: 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;
       border-left: 6px solid var(--card-blue); position: relative;
-      background-color: rgba(255, 255, 255, 0.92); backdrop-filter: blur(5px);
+      background-color: rgba(255, 255, 255, 0.92); 
+      backdrop-filter: blur(5px);
     }
     .trip-info h2 { margin: 0 0 5px 0; color: var(--accent-slate); font-size: 1.4rem;}
     .trip-info p { margin: 0; color: #666; font-size: 0.9rem;}
+    
     .trip-actions { display: flex; gap: 10px; }
-    .main-add-btn { background: var(--card-blue); color: white; padding: 15px; border-radius: 25px; text-align: center; font-size: 1.1rem; cursor: pointer; margin-top: 20px; font-weight: bold; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3); }
+    .main-add-btn {
+      background: var(--card-blue); color: white; padding: 15px; border-radius: 25px; 
+      text-align: center; font-size: 1.1rem; cursor: pointer; margin-top: 20px; font-weight: bold;
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    }
 
     /* --- 4. 行程表區塊 --- */
     #itinerary-view { max-width: 600px; margin: 0 auto; }
-    .itinerary-hero { position: relative; width: 100%; height: 22vh; background-size: cover; background-position: center; border-radius: 0 0 30px 30px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-    .hero-edit-btn { position: absolute; bottom: 15px; right: 15px; background: rgba(255, 255, 255, 0.85); color: var(--accent-slate); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    
+    .itinerary-hero {
+      position: relative; 
+      width: 100%;
+      height: 22vh; 
+      background-image: url('https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=600&q=80');
+      background-size: cover;
+      background-position: center;
+      border-radius: 0 0 30px 30px; 
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .hero-edit-btn {
+      position: absolute; bottom: 15px; right: 15px;
+      background: rgba(255, 255, 255, 0.85); color: var(--accent-slate); padding: 6px 12px;
+      border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer;
+      backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
     .date-slider { display: flex; overflow-x: auto; padding: 0 20px 20px 20px; gap: 12px; white-space: nowrap; -ms-overflow-style: none; scrollbar-width: none; }
     .date-slider::-webkit-scrollbar { display: none; }
-    .date-badge { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 20px; border: 1px solid var(--border-color); border-radius: 16px; cursor: pointer; background: #fff; color: #64748b; min-width: 80px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+    .date-badge {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 10px 20px; border: 1px solid var(--border-color); border-radius: 16px;
+      cursor: pointer; background: #fff; color: #64748b; min-width: 80px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
     .date-badge.selected { background: var(--accent-slate); color: white; border-color: var(--accent-slate);}
     .date-badge .day-name { font-size: 1.2rem; font-weight: 800; margin-bottom: 2px;} 
     .date-badge .day-date { font-size: 0.85rem; font-weight: 500; } 
     .date-badge.selected .day-date { color: rgba(255,255,255,0.8); }
+
     .timeline { padding: 0 20px 20px 20px; }
     .timeline-wrapper { position: relative; }
-    .timeline-item { padding: 15px; background: #fff; display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--border-color); border-radius: 16px; margin-bottom: 0; position: relative; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-    .drag-handle { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #cbd5e1; font-size: 1.4rem; cursor: grab; padding: 10px; z-index: 10; }
+    .timeline-item { 
+      padding: 15px; background: #fff; display: flex; flex-direction: column; gap: 10px;
+      border: 1px solid var(--border-color); border-radius: 16px; margin-bottom: 0;
+      position: relative; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+    
+    .drag-handle {
+      position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+      color: #cbd5e1; font-size: 1.4rem; cursor: grab; padding: 10px; z-index: 10;
+    }
+
     .item-header { display: flex; align-items: flex-start; gap: 12px; padding-right: 40px; }
-    .item-icon-box { width: 40px; height: 40px; border-radius: 50%; background: var(--card-blue); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .item-icon-box { 
+      width: 40px; height: 40px; border-radius: 50%; background: var(--card-blue); color: white; 
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
+    }
     .item-title-group { flex: 1; }
     .item-time { font-size: 1.2rem; font-weight: 800; color: var(--accent-slate); margin-bottom: 2px;}
     .item-title { font-size: 1.1rem; color: var(--accent-slate); font-weight: 800; margin: 0; line-height: 1.3;}
+    
     .item-content { margin-left: 52px; display: flex; flex-direction: column; gap: 6px; }
     .info-row { display: flex; align-items: flex-start; gap: 8px; font-size: 0.9rem; color: #475569; line-height: 1.5;}
     .item-image { width: 120px; height: 120px; object-fit: cover; border-radius: 12px; margin-top: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .transport-connector { margin-left: 35px; border-left: 2px dashed #cbd5e1; padding: 10px 0 10px 25px; display: flex; align-items: center; gap: 8px; position: relative; }
+
+    .transport-connector {
+      margin-left: 35px; border-left: 2px dashed #cbd5e1; padding: 10px 0 10px 25px;
+      display: flex; align-items: center; gap: 8px; position: relative;
+    }
     .timeline-wrapper:last-child .transport-connector { display: none; }
     .trans-mode-icon { font-size: 1.2rem; background: var(--bg-color); padding: 2px; }
     .trans-time-text { color: var(--card-blue); font-size: 0.85rem; font-weight: bold; cursor: pointer; padding: 2px 8px; background: #e6f2ff; border-radius: 12px; border: 1px solid #b3d7ff;}
 
-    /* 通用 Modal 與次要視圖... 略過純樣式設定，保留原始 */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 36, 99, 0.6); display: flex; align-items: center; justify-content: center; z-index: 999; opacity: 1; transition: opacity 0.2s; }
+    .fab-add-itinerary {
+      position: fixed; right: 20px; bottom: 95px; width: 60px; height: 60px;
+      background-color: var(--card-blue); color: white; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 1.8rem; z-index: 101; 
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4); cursor: pointer;
+    }
+
+    /* --- 5. 通用表單彈出視窗 --- */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(10, 36, 99, 0.6); display: flex; align-items: center; justify-content: center; z-index: 999;
+      opacity: 1; transition: opacity 0.2s;
+    }
     .modal-overlay.hidden { opacity: 0; pointer-events: none; }
     .modal-box { background: #fff; width: 90%; max-width: 400px; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -124,10 +185,12 @@
     .form-group label { display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 5px; font-weight: bold;}
     .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 1rem; font-family: inherit; font-weight: 500; outline: none; background: #f8fafc; }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--card-blue); background: #fff; }
+    .form-group textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
     .modal-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 25px; gap: 10px;}
     .btn-save { flex: 1; background: var(--card-blue); color: white; padding: 14px; border-radius: 25px; border: none; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);}
     .btn-delete-item { background: #fee2e2; color: #ef4444; padding: 14px; border-radius: 25px; border: none; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: none; }
 
+    /* --- 6. 航班與記帳本 --- */
     #flight-view, .expense-container, .list-container { padding: 20px; max-width: 600px; margin: 0 auto; }
     .flight-section-title { font-size: 1.1rem; font-weight: 900; color: var(--accent-slate); margin: 20px 0 10px 5px; display: flex; align-items: center; gap: 8px;}
     .flight-card-main { background-color: #FAFAFA; border: 1px solid var(--border-color); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
@@ -164,6 +227,7 @@
     .exp-twd { font-weight: 900; color: var(--card-blue); font-size: 1.2rem; display: flex; align-items: center; justify-content: flex-end; gap: 8px;}
     .exp-jpy { font-size: 0.8rem; color: #94a3b8; margin-top: 2px;}
 
+    /* --- 行李清單通用樣式 --- */
     .add-list-bar { display: flex; gap: 10px; margin-bottom: 20px; }
     .add-list-bar input { flex: 1; padding: 14px 15px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 1rem; outline: none;}
     .add-list-btn { background: var(--card-blue); color: white; border: none; border-radius: 12px; padding: 0 20px; font-size: 1.2rem; cursor: pointer;}
@@ -175,124 +239,120 @@
     .item-text { font-size: 1.1rem; font-weight: bold; color: var(--accent-slate); }
     .item-del-btn { color: #cbd5e1; font-size: 1.2rem; padding: 5px; cursor: pointer;}
 
-    .souvenir-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding-bottom: 20px; }
-    .souvenir-card { background: #fff; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.03); position: relative; display: flex; flex-direction: column; transition: 0.3s; }
-    .souvenir-img-box { position: relative; width: 100%; height: 140px; background: #f1f5f9; }
+    /* --- 🌟 7. 新版必買清單 Grid 樣式 🌟 --- */
+    .souvenir-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      padding-bottom: 20px;
+    }
+    .souvenir-card {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      transition: 0.3s;
+    }
+    .souvenir-img-box {
+      position: relative;
+      width: 100%;
+      height: 140px;
+      background: #f1f5f9;
+    }
     .souvenir-img { width: 100%; height: 100%; object-fit: cover; }
-    .souvenir-checkbox { position: absolute; top: 10px; left: 10px; width: 22px; height: 22px; background: white; border: 2px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    
+    /* 左上角方形勾選框 */
+    .souvenir-checkbox {
+      position: absolute; top: 10px; left: 10px; width: 22px; height: 22px;
+      background: white; border: 2px solid #e2e8f0; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
     .souvenir-card.done .souvenir-checkbox { background: var(--card-blue); border-color: var(--card-blue); }
     .souvenir-card.done .souvenir-checkbox::after { content: '✔'; color: white; font-size: 14px; font-weight: bold; }
+    
     .souvenir-info { padding: 12px; flex: 1; display: flex; flex-direction: column; }
     .souvenir-tags { display: flex; gap: 5px; margin-bottom: 8px; flex-wrap: wrap; }
     .souvenir-tag { font-size: 0.65rem; padding: 4px 8px; border-radius: 12px; font-weight: 800; display: flex; align-items: center; gap: 3px;}
-    .tag-cat { background: #FCE7F3; color: #BE185D; }
-    .tag-loc { background: #F3E8FF; color: #7E22CE; }
+    .tag-cat { background: #FCE7F3; color: #BE185D; } /* 柔和的粉色系 */
+    .tag-loc { background: #F3E8FF; color: #7E22CE; } /* 柔和的紫色系 */
+    
     .souvenir-title { font-size: 1rem; font-weight: 900; color: var(--accent-slate); margin: 0 0 5px 0; line-height: 1.3;}
-    .souvenir-notes { font-size: 0.75rem; color: #64748b; background: #FFFBEA; padding: 6px 8px; border-radius: 6px; margin-top: 5px; margin-bottom: 10px; flex: 1; border-left: 3px solid #FCD34D; line-height: 1.4; }
-    .souvenir-actions { display: flex; justify-content: flex-end; gap: 8px; border-top: 1px dashed #e2e8f0; padding-top: 10px; margin-top: auto; }
+    .souvenir-notes {
+      font-size: 0.75rem; color: #64748b; background: #FFFBEA; /* 微黃底色 */
+      padding: 6px 8px; border-radius: 6px; margin-top: 5px; margin-bottom: 10px; flex: 1;
+      border-left: 3px solid #FCD34D; line-height: 1.4;
+    }
+    
+    .souvenir-actions {
+      display: flex; justify-content: flex-end; gap: 8px; border-top: 1px dashed #e2e8f0; padding-top: 10px; margin-top: auto;
+    }
     .souvenir-btn { font-size: 0.75rem; padding: 5px 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px;}
     .btn-edit { background: #F1F5F9; color: #475569; }
     .btn-del { background: #FEE2E2; color: #EF4444; }
+
+    /* --- 已購買狀態的疊加效果 --- */
     .souvenir-card.done .souvenir-img { opacity: 0.4; filter: grayscale(80%); }
-    .purchased-stamp { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-10deg); background: #8FAADC; color: white; font-size: 1.1rem; font-weight: 900; padding: 6px 14px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); pointer-events: none; z-index: 20; display: none; white-space: nowrap; letter-spacing: 1px; }
+    .purchased-stamp {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-10deg);
+      background: #8FAADC; color: white; font-size: 1.1rem; font-weight: 900;
+      padding: 6px 14px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      pointer-events: none; z-index: 20; display: none; white-space: nowrap; letter-spacing: 1px;
+    }
     .souvenir-card.done .purchased-stamp { display: block; }
 
-    .shortcut-bar { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; background-color: #ffffff; display: flex; justify-content: space-around; align-items: center; z-index: 99; box-shadow: 0 -4px 20px rgba(0,0,0,0.05); border-radius: 24px 24px 0 0; padding-bottom: env(safe-area-inset-bottom); }
-    .shortcut-item { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #A0AEC0; font-size: 0.75rem; cursor: pointer; flex: 1; transition: color 0.2s; font-weight: 600; }
+
+    /* --- 8. 底部捷徑導覽欄 --- */
+    .shortcut-bar {
+      position: fixed; bottom: 0; left: 0; width: 100%; height: 75px;
+      background-color: #ffffff; 
+      display: flex; justify-content: space-around; align-items: center; z-index: 99;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.05); border-radius: 24px 24px 0 0;
+      padding-bottom: env(safe-area-inset-bottom); 
+    }
+    .shortcut-item {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      color: #A0AEC0; font-size: 0.75rem; cursor: pointer; flex: 1;
+      transition: color 0.2s; font-weight: 600;
+    }
     .shortcut-item.active { color: var(--card-blue); font-weight: 800;}
     .shortcut-item i { font-size: 1.4rem; }
+    
     .text-center { text-align: center; }
 
-    /* 🌟🌟🌟 新增：完美鎖死尺寸的手帳風 PDF 引擎 🌟🌟🌟 */
-    .pdf-export-wrapper {
-      position: absolute; left: -9999px; top: 0; width: 794px; 
-      background: #f8fafc; z-index: -100; pointer-events: none;
-    }
-    
-    .pdf-page-container {
-      width: 794px; 
-      height: 1123px; /* ✅ 強制鎖死 A4 尺寸，保證不忽大忽小 */
-      overflow: hidden; /* ✅ 行程太多會自動裁切，保證版面不變形 */
-      background-color: #ffffff;
-      /* 藍色網格背景 */
-      background-image: linear-gradient(#e0e7ff 1px, transparent 1px), linear-gradient(90deg, #e0e7ff 1px, transparent 1px);
-      background-size: 25px 25px;
-      /* 圓角淡藍色外框 */
-      border: 18px solid #dbeafe;
-      border-radius: 40px;
-      padding: 50px 40px;
-      box-sizing: border-box;
-      font-family: 'Microsoft JhengHei', sans-serif;
-      color: #333;
-    }
-
+    /* 🌟🌟🌟 新增：PDF 匯出專用樣式 🌟🌟🌟 */
+    .pdf-export-wrapper { position: absolute; left: -9999px; top: 0; width: 794px; background: #f8fafc; z-index: -100; pointer-events: none; }
+    .pdf-page-container { width: 794px; height: 1123px; overflow: hidden; background-color: #ffffff; background-image: linear-gradient(#e0e7ff 1px, transparent 1px), linear-gradient(90deg, #e0e7ff 1px, transparent 1px); background-size: 25px 25px; border: 18px solid #dbeafe; border-radius: 40px; padding: 50px 40px; box-sizing: border-box; font-family: 'Microsoft JhengHei', sans-serif; color: #333; }
     .pdf-header { display: flex; align-items: baseline; gap: 20px; margin-bottom: 40px; border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 15px;}
     .pdf-day-text { font-family: 'Dancing Script', cursive; font-size: 5rem; color: #d4a39b; margin: 0; font-weight: bold; line-height: 1;}
     .pdf-trip-info { font-size: 1.6rem; letter-spacing: 3px; color: #333; font-style: italic; font-weight: bold; }
-
-    /* ✅ 新增：雙排排版設定 */
-    .pdf-timeline-columns {
-      display: flex;
-      gap: 30px;
-      height: 850px; /* 扣掉 Header 後剩下的高度 */
-    }
-    
-    .pdf-timeline-wrap { 
-      flex: 1; 
-      display: flex; 
-      flex-direction: column; 
-      position: relative; 
-      padding-left: 10px; 
-    }
-    
-    /* 當觸發雙排時，兩欄中間加一條分隔虛線 */
-    .pdf-timeline-columns.is-dual .pdf-timeline-wrap:first-child {
-      border-right: 2px dashed #e2e8f0;
-      padding-right: 20px;
-    }
-
+    .pdf-timeline-columns { display: flex; gap: 30px; height: 850px; }
+    .pdf-timeline-wrap { flex: 1; display: flex; flex-direction: column; position: relative; padding-left: 10px; }
+    .pdf-timeline-columns.is-dual .pdf-timeline-wrap:first-child { border-right: 2px dashed #e2e8f0; padding-right: 20px; }
     .pdf-item { display: flex; margin-bottom: 25px; position: relative; }
-    /* 雙排時時間縮小一點 */
     .pdf-timeline-columns.is-dual .pdf-time { width: 65px; font-size: 1.1rem; }
     .pdf-time { width: 90px; font-weight: 900; font-size: 1.4rem; color: #333; padding-top: 5px; flex-shrink: 0; text-align: left;}
-    
     .pdf-divider { width: 2px; background: repeating-linear-gradient(to bottom, #888 0, #888 5px, transparent 5px, transparent 10px); margin: 0 20px; position: relative; }
     .pdf-content { flex: 1; padding-top: 5px; position: relative;}
-    
     .pdf-timeline-columns.is-dual .pdf-title { font-size: 1.1rem; }
     .pdf-title { font-weight: 900; font-size: 1.4rem; color: #111; margin-bottom: 8px;}
-    
     .pdf-timeline-columns.is-dual .pdf-notes { font-size: 0.85rem; margin-bottom: 5px; }
     .pdf-notes { font-size: 1.1rem; color: #555; line-height: 1.6; margin-bottom: 15px;}
-    
-    .pdf-image { 
-      max-width: 100%; max-height: 160px; object-fit: cover; 
-      border-radius: 8px; border: 6px solid white; 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
-      transform: rotate(-3deg); 
-      margin-top: 5px; margin-bottom: 10px;
-    }
+    .pdf-image { max-width: 100%; max-height: 160px; object-fit: cover; border-radius: 8px; border: 6px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: rotate(-3deg); margin-top: 5px; margin-bottom: 10px;}
     .pdf-item:nth-child(even) .pdf-image { transform: rotate(2deg); }
-
-    .pdf-trans-row { 
-      margin-left: 130px; 
-      padding: 0 0 15px 20px; 
-      border-left: 2px dashed #cbd5e1; 
-      color: #64748b; font-size: 1rem; font-weight: bold; 
-      display: flex; align-items: center; gap: 8px; 
-      margin-top: -10px; margin-bottom: 5px;
-    }
+    .pdf-trans-row { margin-left: 130px; padding: 0 0 15px 20px; border-left: 2px dashed #cbd5e1; color: #64748b; font-size: 1rem; font-weight: bold; display: flex; align-items: center; gap: 8px; margin-top: -10px; margin-bottom: 5px;}
     .pdf-timeline-columns.is-dual .pdf-trans-row { margin-left: 105px; padding-bottom: 10px; font-size: 0.85rem;}
     .pdf-trans-icon { font-size: 1.3rem; background: white; border-radius: 50%; padding: 2px;}
     .pdf-timeline-columns.is-dual .pdf-trans-icon { font-size: 1.1rem; }
-
-    /* ✅ 必買清單的專屬 PDF 排版 */
     .pdf-sov-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
     .pdf-sov-item { background: white; padding: 15px; border-radius: 16px; border: 3px solid var(--border-color); display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
     .pdf-sov-img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; }
     .pdf-sov-title { font-weight: 900; font-size: 1.2rem; color: var(--accent-slate); margin: 0; display: flex; align-items: center; gap: 8px; }
     .pdf-sov-check { width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 4px; display: inline-block; }
-
   </style>
 </head>
 <body>
@@ -309,18 +369,15 @@
       <div class="back-btn" onclick="switchPage('trips-list-view')"><i class="fas fa-home"></i> 總覽</div>
       <div style="font-size: 1.2rem; font-weight: 900; color: var(--accent-slate);" id="itinerary-title">行程表規劃</div>
       
-      <div class="nav-actions">
-        <!-- ✅ 這是你的匯出按鈕 -->
-        <button class="btn-pdf clickable" onclick="exportFullTripToPDF()" id="pdf-export-btn">
-          <i class="fas fa-file-pdf"></i> 匯出
-        </button>
+      <!-- 🌟 新增的匯出按鈕 🌟 -->
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button class="clickable" style="background: var(--accent-slate); color: white; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);" onclick="exportFullTripToPDF()" id="pdf-export-btn"><i class="fas fa-file-pdf"></i> 匯出</button>
         <div style="color: var(--accent-slate); font-size: 1.3rem; cursor: pointer;" onclick="openTripModal(appState.currentTripId)">
           <i class="fas fa-cog"></i>
         </div>
       </div>
 
     </div>
-    
     <div class="itinerary-hero"><div class="hero-edit-btn" onclick="openImageModal()"><i class="fas fa-camera"></i> 更改封面</div></div>
     <div class="date-slider" id="date-container"></div>
     <div class="timeline" id="timeline-container"></div>
@@ -334,7 +391,7 @@
     <div style="padding: 0 20px 20px 20px; max-width: 600px; margin: 0 auto;">
       <div class="flight-section-title">🛫 去程航班</div>
       <div class="flight-card-main">
-        <div class="flight-card-top"><div style="font-family: var(--serif-font); color: #888; font-weight: bold;" id="fl-out-airline">釜航空</div><div class="flight-huge-num" id="fl-out-code">BX 796</div></div>
+        <div class="flight-card-top"><div style="font-family: var(--serif-font); color: #888; font-weight: bold;" id="fl-out-airline">釜山航空</div><div class="flight-huge-num" id="fl-out-code">BX 796</div></div>
         <div class="flight-card-middle" style="border-bottom: 1px dashed #cbd5e1;">
           <div class="flight-time-block"><div class="flight-huge-code" id="fl-out-dep-port">KHH</div><div class="flight-huge-time" id="fl-out-dep-time">15:00</div><div class="flight-airport-name flight-airport-khh" id="fl-out-dep-city">高雄</div></div>
           <div style="text-align:center;"><div id="fl-out-duration" style="font-size: 0.8rem; color:#64748b;">02h25m</div><div style="font-size: 1.5rem; color: var(--card-blue); margin: 2px 0;"><i class="fas fa-plane"></i></div><div id="fl-out-date" style="font-size: 0.8rem; color:#64748b;">2026/03/10</div></div>
@@ -364,6 +421,7 @@
           <h3 style="margin: 0; color: var(--accent-slate); font-size: 1.2rem;"><i class="fas fa-chart-bar" style="color:var(--card-blue);"></i> 結算統整</h3>
           <div id="display-exchange-rate" style="font-size: 0.8rem; color: var(--card-blue); background: #e6f2ff; padding: 4px 10px; border-radius: 12px; font-weight: bold; border: 1px solid #b3d7ff;">匯率載入中...</div>
         </div>
+        
         <div class="summary-total-box"><div class="twd-row"><span class="currency-label">TWD</span> <span id="total-twd">0</span></div><div class="jpy-row"><span class="currency-label">JPY</span> <span id="total-jpy">0</span></div></div>
         <h4 style="margin: 15px 0 10px 0; color: var(--accent-slate); font-size: 0.95rem; font-weight: bold;"><i class="fas fa-user"></i> 個人的總花費</h4>
         <div id="person-summary-list"></div>
@@ -405,7 +463,6 @@
   <div id="trans-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">編輯交通時間</h3><div class="modal-close" onclick="closeModal('trans-modal')"><i class="fas fa-times"></i></div></div><div class="form-group" style="text-align: center;"><label>交通方式</label><div style="display: flex; justify-content: center; gap: 20px; margin-top: 10px;"><div class="trans-icon-btn" data-mode="car" style="font-size: 1.8rem; cursor: pointer; padding: 5px 15px; border-radius: 12px; border: 2px solid var(--card-blue); background: #f8fafc;" onclick="selectTransMode('car')">🚗</div><div class="trans-icon-btn" data-mode="train" style="font-size: 1.8rem; cursor: pointer; padding: 5px 15px; border-radius: 12px; border: 2px solid transparent; background: #f8fafc;" onclick="selectTransMode('train')">🚃</div><div class="trans-icon-btn" data-mode="walk" style="font-size: 1.8rem; cursor: pointer; padding: 5px 15px; border-radius: 12px; border: 2px solid transparent; background: #f8fafc;" onclick="selectTransMode('walk')">🚶</div></div></div><div style="display: flex; gap: 10px;"><div class="form-group" style="flex:1;"><label>小時 (hr)</label><input type="number" id="trans-hr" min="0" placeholder="0"></div><div class="form-group" style="flex:1;"><label>分鐘 (min)</label><input type="number" id="trans-min" min="0" max="59" placeholder="30"></div></div><div class="modal-actions"><button class="btn-save clickable" style="width: 100%;" onclick="saveTransTime()">儲存</button></div></div></div>
   <div id="expense-edit-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">修改花費</h3><div class="modal-close" onclick="closeModal('expense-edit-modal')"><i class="fas fa-times"></i></div></div><div class="form-group"><label>買什麼？</label><input type="text" id="edit-exp-what"></div><div class="form-group"><label>花費金額 (日幣 ¥)</label><input type="number" id="edit-exp-amount"></div><div class="form-group"><label>誰付的？</label><input type="text" id="edit-exp-who"></div><div class="modal-actions"><button class="btn-delete-item clickable" style="display:block;" onclick="deleteExpenseFromModal()">刪除</button><button class="btn-save clickable" onclick="saveExpenseEdit()">儲存修改</button></div></div></div>
   <div id="image-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">更換封面圖片</h3><div class="modal-close" onclick="closeModal('image-modal')"><i class="fas fa-times"></i></div></div><div class="form-group"><label>貼上圖片網址 (URL)</label><input type="text" id="hero-image-url" placeholder="https://..."></div><div class="modal-actions"><button class="btn-save clickable" style="width: 100%;" onclick="saveHeroImage()">確認更換</button></div></div></div>
-  <div id="link-edit-modal" class="modal-overlay hidden"><div class="modal-box" style="background: #F4F7FB; padding: 0; max-width: 350px;"><div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; border-radius: 24px 24px 0 0; border-bottom: 1px solid #e2e8f0;"><div style="color: #F5A623; font-weight: bold; cursor: pointer; font-size: 1rem;" onclick="closeModal('link-edit-modal')">取消</div><div style="font-weight: 900; color: #333; font-size: 1.1rem;">編輯連結</div><div style="color: #F5A623; font-weight: bold; cursor: pointer; font-size: 1rem;" onclick="saveLinkEdit()">完成</div></div><div style="padding: 20px;"><div style="margin-bottom: 15px;"><label style="display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 5px; margin-left: 5px;">連結至</label><div style="position: relative;"><input type="text" id="edit-link-url" style="width: 100%; padding: 12px 35px 12px 15px; border: none; border-radius: 12px; font-size: 1rem; outline: none; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); box-sizing: border-box;"><i class="fas fa-times-circle" style="position: absolute; right: 12px; top: 14px; color: #cbd5e1; cursor: pointer;" onclick="document.getElementById('edit-link-url').value=''"></i></div></div><div style="margin-bottom: 20px;"><label style="display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 5px; margin-left: 5px;">名稱</label><div style="position: relative;"><input type="text" id="edit-link-name" style="width: 100%; padding: 12px 35px 12px 15px; border: none; border-radius: 12px; font-size: 1rem; outline: none; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); box-sizing: border-box;"><i class="fas fa-times-circle" style="position: absolute; right: 12px; top: 14px; color: #cbd5e1; cursor: pointer;" onclick="document.getElementById('edit-link-name').value=''"></i></div></div><button class="clickable" style="width: 100%; padding: 14px; border-radius: 12px; border: none; background: #fff; color: #ef4444; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05); text-align: left; padding-left: 15px;" onclick="removeLink()">移除連結</button></div></div></div>
 
   <div class="fab-add-itinerary hidden" id="fab-add-btn" onclick="openItiModal()"><i class="fas fa-plus"></i></div>
 
@@ -473,11 +530,8 @@
         for (let key in appState.souvenir) appState.souvenir[key] = toArray(appState.souvenir[key]);
         
         for (let key in appState.itineraries) {
-            let originalDays = appState.itineraries[key];
-            let tripDaysArray = [];
-            for (let dayIndex in originalDays) { tripDaysArray[dayIndex] = toArray(originalDays[dayIndex]); }
-            for (let i = 0; i < tripDaysArray.length; i++) { if (!tripDaysArray[i]) tripDaysArray[i] = []; }
-            appState.itineraries[key] = tripDaysArray;
+            let tripDays = toArray(appState.itineraries[key]);
+            appState.itineraries[key] = tripDays.map(day => toArray(day));
         }
       }
       
@@ -747,7 +801,6 @@
       closeModal('trans-modal'); renderItinerary(); saveToDatabase();
     }
 
-    // 花費與其他功能略，保留不變...
     function renderExpenses() { /* ... */ } function addExpense() { /* ... */ } function deleteExpense(id) { /* ... */ } function openExpenseEditModal(expId) { /* ... */ } function saveExpenseEdit() { /* ... */ } function deleteExpenseFromModal() { /* ... */ } function renderChecklist(type) { /* ... */ } function addListItem(type) { /* ... */ } function toggleCheckItem(type, itemId) { /* ... */ } function deleteCheckItem(type, itemId) { /* ... */ } function renderSouvenir() { /* ... */ } function toggleSouvenir(itemId) { /* ... */ } function openSouvenirModal(sovId = null) { /* ... */ } function saveSouvenir() { /* ... */ } function renderFlightInfo() { /* ... */ } function toggleBothFlightsEdit() { /* ... */ } function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
     /* 🌟🌟🌟 新增：跨網域圖片抓取小精靈 (Proxy) 🌟🌟🌟 */
@@ -759,7 +812,7 @@
       return url;
     }
 
-    // 🌟🌟🌟 新增：完美滿版 A4、自動雙排手帳風 PDF 匯出引擎 🌟🌟🌟
+    /* 🌟🌟🌟 新增：滿版 A4、自動雙排手帳風 PDF 匯出引擎 🌟🌟🌟 */
     async function exportFullTripToPDF() {
       const btn = document.getElementById('pdf-export-btn');
       const originalText = btn.innerHTML;
@@ -778,18 +831,12 @@
         const startDate = new Date(trip.start);
         const year = startDate.getFullYear();
 
-        // 1. 建立一個隱藏的「列印工廠」區域
         const exportContainer = document.createElement('div');
         exportContainer.className = 'pdf-export-wrapper';
         document.body.appendChild(exportContainer);
 
-        // ==========================
-        // 製作【每一天】的行程頁面 (含聰明雙排系統)
-        // ==========================
         for (let i = 0; i < tripDays.length; i++) {
           const items = tripDays[i] || [];
-          
-          // 如果行程超過 5 個，就啟動雙排模式 (is-dual)
           const isDual = items.length > 5;
           const dualClass = isDual ? 'is-dual' : '';
           
@@ -805,11 +852,8 @@
           if (items.length === 0) {
             pageHtml += `<div style="width:100%; text-align:center; color:#999; margin-top:50px; font-size:1.5rem; font-weight:bold;">本日無行程</div>`;
           } else {
-            // 處理行程資料，並準備分欄
             let leftColumnHtml = `<div class="pdf-timeline-wrap">`;
             let rightColumnHtml = `<div class="pdf-timeline-wrap">`;
-            
-            // 計算要在哪裡切開兩欄 (一半一半)
             const splitIndex = isDual ? Math.ceil(items.length / 2) : items.length;
 
             items.forEach((item, index) => {
@@ -828,36 +872,25 @@
                 </div>
               `;
               
-              // 交通圖示 (最後一個行程不用加，或是右欄最後一個不用加)
               if(index < items.length - 1 && index !== splitIndex - 1) {
                  const transText = (item.transTime && item.transTime !== "交通時間") ? item.transTime : '';
                  const modeIcon = item.transMode === 'train' ? '🚃' : (item.transMode === 'walk' ? '🚶' : '🚗');
                  itemHtml += `<div class="pdf-trans-row"><span class="pdf-trans-icon">${modeIcon}</span> ${transText}</div>`;
               }
 
-              // 分配到左右欄
-              if (index < splitIndex) {
-                leftColumnHtml += itemHtml;
-              } else {
-                rightColumnHtml += itemHtml;
-              }
+              if (index < splitIndex) leftColumnHtml += itemHtml;
+              else rightColumnHtml += itemHtml;
             });
 
             leftColumnHtml += `</div>`;
             rightColumnHtml += `</div>`;
-            
-            // 組裝左右欄
             pageHtml += leftColumnHtml;
             if (isDual) pageHtml += rightColumnHtml;
           }
-
-          pageHtml += `</div></div>`; // 結束 columns 和 page
+          pageHtml += `</div></div>`;
           exportContainer.innerHTML += pageHtml;
         }
 
-        // ==========================
-        // 製作【必買清單】專屬頁面
-        // ==========================
         const souvenirs = appState.souvenir[trip.id] || [];
         if (souvenirs.length > 0) {
           let sovHtml = `
@@ -868,7 +901,6 @@
               </div>
               <div class="pdf-sov-grid">
           `;
-          
           souvenirs.forEach(item => {
             const safeImgUrl = getCorsProxy(item.image) || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=300&q=80';
             const title = item.title || item.text || '未命名物品';
@@ -886,35 +918,20 @@
           exportContainer.innerHTML += sovHtml;
         }
 
-        // 3. 啟動 jsPDF 準備裝訂 (設定為精確的 A4 尺寸)
         const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
 
-        // 4. 對隱藏的「手帳」進行高畫質截圖並貼到 PDF 上
         const allPages = exportContainer.querySelectorAll('.pdf-page-container');
-        
         for (let i = 0; i < allPages.length; i++) {
           const pageEl = allPages[i];
-          
-          const canvas = await html2canvas(pageEl, { 
-            scale: 2, 
-            useCORS: true, 
-            allowTaint: false,
-            backgroundColor: '#ffffff' 
-          });
-          
+          const canvas = await html2canvas(pageEl, { scale: 2, useCORS: true, allowTaint: false, backgroundColor: '#ffffff' });
           const imgData = canvas.toDataURL('image/png');
-          
           if (i > 0) pdf.addPage();
-          // 因為我們已經將容器鎖死在 A4 比例，所以直接用 pdfWidth 和 pdfHeight 填滿，完美滿版
           pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
         }
 
-        // 5. 匯出下載
         pdf.save(`${trip.name}_手帳行程表.pdf`);
-
-        // 6. 打掃工廠
         document.body.removeChild(exportContainer);
 
       } catch (error) {
