@@ -829,6 +829,37 @@
         container.appendChild(badge);
       }
       if(appState.currentDayIndex >= diffDays) { appState.currentDayIndex = Math.max(0, diffDays - 1); }
+
+// 🌟🌟🌟 新增：讓上方日期標籤可以拖曳交換整天行程 🌟🌟🌟
+      if(window.dateSortableInst) window.dateSortableInst.destroy();
+      window.dateSortableInst = new Sortable(container, {
+        animation: 150,
+        delay: 300, // 手機長按 0.3 秒觸發拖曳，避免與左右滑動衝突
+        delayOnTouchOnly: true,
+        ghostClass: 'dragging',
+        onEnd: function (evt) {
+          if(evt.oldIndex === evt.newIndex) return;
+          const array = appState.itineraries[appState.currentTripId];
+          
+          // 搬移整天行程的資料 (陣列位置交換)
+          const movedItem = array.splice(evt.oldIndex, 1)[0];
+          array.splice(evt.newIndex, 0, movedItem);
+          
+          // 更新目前的焦點天數，讓畫面停留在原本拖曳的那一天
+          if (appState.currentDayIndex === evt.oldIndex) {
+              appState.currentDayIndex = evt.newIndex;
+          } else if (appState.currentDayIndex > evt.oldIndex && appState.currentDayIndex <= evt.newIndex) {
+              appState.currentDayIndex--;
+          } else if (appState.currentDayIndex < evt.oldIndex && appState.currentDayIndex >= evt.newIndex) {
+              appState.currentDayIndex++;
+          }
+          
+          saveToDatabase();
+          generateDaysForTrip(trip); // 重新繪製日期列，確保日期不變但內容已交換
+        }
+      });
+      // 🌟🌟🌟 結束 🌟🌟🌟
+
       renderItinerary();
     }
 
